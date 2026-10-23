@@ -1,0 +1,18 @@
+{
+  "name": "호민쌤단어장",
+  "short_name": "호민쌤단어장",
+  "description": "Ryan's Edge English 호민쌤단어장",
+  "id": "/ryanwords/",
+  "start_url": "/ryanwords/?source=pwa",
+  "scope": "/ryanwords/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#004D7F",
+  "theme_color": "#004D7F",
+  "lang": "ko",
+  "icons": [
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
