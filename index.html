@@ -3,7 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#6B2FA8">
+<meta name="theme-color" content="#004D7F">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="호민쌤단어장">
 <title>호민쌤단어장</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,6 +50,12 @@ button{font:inherit;color:inherit;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 :root[data-theme="dark"] .chip[aria-pressed="true"],:root:not([data-theme="light"]) .chip[aria-pressed="true"]{color:#1A1327}
 .hint{font-size:13px;color:var(--muted);margin:0}
+.install{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow);margin-bottom:14px}
+.install img{width:44px;height:44px;border-radius:11px;flex:none}
+.install .txt{flex:1;font-size:13px;line-height:1.45;color:var(--muted)}.install .txt b{display:block;font-size:14px;color:var(--ink);font-weight:600}
+.install button{flex:none;font:inherit;font-weight:600;font-size:13px;padding:8px 12px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+.install button.x{background:transparent;color:var(--muted);border-color:transparent;padding:8px 6px}
+@media (display-mode: standalone){.install{display:none}}
 .field{display:flex;flex-direction:column;gap:9px}
 .setup{display:flex;flex-direction:column;gap:18px}
 .primary{width:100%;background:var(--accent);color:#fff;border:0;border-radius:14px;padding:15px;font-size:17px;font-weight:600}
@@ -148,6 +160,8 @@ button{font:inherit;color:inherit;cursor:pointer}
     <span class="tag">Ryan's Edge English</span>
   </header>
 
+  <!-- 홈 화면 설치 안내 (앱으로 설치되면 자동으로 숨김) -->
+  <div class="install" id="installBar" hidden><img src="icon-512.png" alt=""><div class="txt" id="installTxt"></div><button id="installBtn" hidden>앱 설치</button><button class="x" id="installX" title="닫기">✕</button></div>
   <!-- 자료 목록 -->
   <section id="home" class="lib"></section>
 
@@ -205,13 +219,38 @@ button{font:inherit;color:inherit;cursor:pointer}
 <script>
 const LIBRARY = /*__LIBRARY__*/[];
 
+
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const shuffle = a => { const b = a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
 const store = { get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} } };
 const BEST_KEY = "hominssam.vocab.best.v1";
 const VIEWS = ["home","setup","study","cards","quiz","result"];
-function show(v){ VIEWS.forEach(x => $(x).hidden = x !== v); window.scrollTo({top:0}); }
+// ── 홈 화면 앱 설치(PWA): GitHub Pages 주소에서 열었을 때만 동작 ──
+let INSTALL_OK = false, deferredPrompt = null;
+(function(){
+  const hosted = /github\.io$/.test(location.hostname);
+  const standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  if(!hosted || standalone) return;
+  if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+  let dismissed = false; try { dismissed = localStorage.getItem("installDismissed") === "1"; } catch(e) {}
+  if(dismissed) return;
+  const ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const txt = $("installTxt");
+  if(ios){
+    txt.innerHTML = "<b>휴대폰에 앱으로 설치하기</b>Safari 아래 <b style='display:inline'>공유</b> 버튼(네모에 화살표) → <b style='display:inline'>홈 화면에 추가</b>를 누르면 앱 아이콘이 생깁니다.";
+    INSTALL_OK = true;
+  } else {
+    txt.innerHTML = "<b>휴대폰에 앱으로 설치하기</b>브라우저 메뉴(⋮ 또는 ≡) → <b style='display:inline'>홈 화면에 추가</b>(또는 앱 설치)를 누르면 앱 아이콘이 생깁니다.";
+    INSTALL_OK = true;
+    window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredPrompt = e; txt.innerHTML = "<b>휴대폰에 앱으로 설치하기</b>홈 화면에 아이콘을 추가하면 앱처럼 바로 열립니다."; $("installBtn").hidden = false; });
+    $("installBtn").addEventListener("click", async () => { if(!deferredPrompt) return; deferredPrompt.prompt(); const r = await deferredPrompt.userChoice; deferredPrompt = null; if(r.outcome === "accepted"){ INSTALL_OK = false; $("installBar").hidden = true; } });
+  }
+  $("installX").addEventListener("click", () => { INSTALL_OK = false; $("installBar").hidden = true; try { localStorage.setItem("installDismissed", "1"); } catch(e) {} });
+  window.addEventListener("appinstalled", () => { INSTALL_OK = false; $("installBar").hidden = true; });
+})();
+
+function show(v){ VIEWS.forEach(x => $(x).hidden = x !== v); $("installBar").hidden = !(v === "home" && INSTALL_OK); window.scrollTo({top:0}); }
 
 const ACTS = { list:{label:"학습 (단어 목록)", hint:"단어 목록을 보며 뜻과 영영풀이를 익힙니다. 항목을 누르면 뜻을 가리거나 보일 수 있습니다."},
                cards:{label:"학습 (플래시카드)", hint:"카드를 넘기며 외웁니다. '다시 볼래요'로 표시한 단어만 다시 돌릴 수 있습니다."},
