@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6B2FA8">
+<title>호민쌤단어장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F2EFF6; --surface:#FFFFFF; --surface-2:#FAF8FC; --ink:#1D1526; --muted:#6B6178; --line:#E3DDEB;
+  --accent:#6B2FA8; --accent-soft:#F0E6FA; --accent-ink:#4A1D78;
+  --good:#186B50; --good-soft:#DDF0E8; --good-line:#8FCFB6; --bad:#A32744; --bad-soft:#FBE3E9; --bad-line:#E7A2B2; --gold:#96660F;
+  --shadow:0 1px 2px rgba(29,21,38,.06), 0 12px 28px -14px rgba(29,21,38,.22);
+  --sans:"IBM Plex Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",system-ui,sans-serif;
+  --display:"Fraunces",Georgia,"Times New Roman",serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#131020; --surface:#1E1830; --surface-2:#241D38; --ink:#ECE5F4; --muted:#A497B6; --line:#332944;
+  --accent:#BC91F2; --accent-soft:#2A2044; --accent-ink:#D9BEFF; --good:#63D6A7; --good-soft:#16362B; --good-line:#2E6B54;
+  --bad:#F38CA3; --bad-soft:#3A1A24; --bad-line:#7A3247; --gold:#E2B462; --shadow:0 1px 2px rgba(0,0,0,.4), 0 16px 34px -18px rgba(0,0,0,.8);}}
+:root[data-theme="dark"]{
+  --bg:#131020; --surface:#1E1830; --surface-2:#241D38; --ink:#ECE5F4; --muted:#A497B6; --line:#332944;
+  --accent:#BC91F2; --accent-soft:#2A2044; --accent-ink:#D9BEFF; --good:#63D6A7; --good-soft:#16362B; --good-line:#2E6B54;
+  --bad:#F38CA3; --bad-soft:#3A1A24; --bad-line:#7A3247; --gold:#E2B462; --shadow:0 1px 2px rgba(0,0,0,.4), 0 16px 34px -18px rgba(0,0,0,.8);}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px;border-radius:6px}
+[hidden]{display:none !important}
+.wrap{max-width:600px;margin:0 auto;padding:22px 18px 56px;display:flex;flex-direction:column;gap:18px;min-height:100dvh}
+.masthead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:26px;letter-spacing:-.02em;margin:0;cursor:pointer}
+.brand em{font-style:normal;color:var(--accent)}
+.tag{font-family:var(--display);font-size:13px;color:var(--muted);letter-spacing:.03em}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.pad{padding:20px}
+.label{font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--surface-2);border:1.5px solid var(--line);color:var(--ink);border-radius:999px;padding:8px 15px;font-size:14.5px;font-weight:500;transition:.15s}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] .chip[aria-pressed="true"],:root:not([data-theme="light"]) .chip[aria-pressed="true"]{color:#1A1327}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.field{display:flex;flex-direction:column;gap:9px}
+.setup{display:flex;flex-direction:column;gap:18px}
+.primary{width:100%;background:var(--accent);color:#fff;border:0;border-radius:14px;padding:15px;font-size:17px;font-weight:600}
+:root[data-theme="dark"] .primary,:root:not([data-theme="light"]) .primary{color:#171026}
+.primary:active{transform:translateY(1px)}
+.ghost{background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;font-size:14.5px;font-weight:600}
+/* 자료 목록 */
+.lib{display:flex;flex-direction:column;gap:12px}
+.mat{display:flex;flex-direction:column;gap:5px;text-align:left;padding:18px 20px;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;box-shadow:var(--shadow);transition:border-color .15s}
+.mat:hover{border-color:var(--accent)}
+.mat .mt{font-size:18px;font-weight:700;letter-spacing:-.01em}
+.mat .ms{font-size:13.5px;color:var(--muted)}
+.mat .mn{font-family:var(--mono);font-size:12.5px;color:var(--accent)}
+.sectitle{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sectitle h2{margin:0;font-size:19px;font-weight:700;letter-spacing:-.01em}
+.sectitle .sub{font-size:13px;color:var(--muted)}
+.back{background:none;border:0;color:var(--accent);font-weight:600;padding:0;font-size:14px}
+.bestline{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted)}
+.bestline b{font-family:var(--mono);color:var(--gold);font-size:15px}
+/* 학습 목록 */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.wl{display:flex;flex-direction:column}
+.wi{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:11px 4px;border-top:1px solid var(--line);align-items:baseline;cursor:pointer}
+.wi:first-child{border-top:0}
+.wi .w{font-family:var(--display);font-weight:700;font-size:18px}
+.wi .p{font-family:var(--mono);font-size:11.5px;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:1px 6px;justify-self:end}
+.wi .k{grid-column:1/-1;font-size:15px}
+.wi .e{grid-column:1/-1;font-family:var(--display);font-size:13.5px;color:var(--muted);line-height:1.4}
+.wi.hide .k,.wi.hide .e{display:none}
+.wi .g{grid-column:1/-1;font-size:11px;color:var(--muted);letter-spacing:.05em}
+/* 플래시카드 */
+.fc{min-height:260px;padding:30px 22px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;cursor:pointer;user-select:none}
+.fc .qkind{font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.fc .big{font-family:var(--display);font-weight:700;font-size:clamp(30px,8vw,44px);line-height:1.15;margin:0;text-wrap:balance;word-break:break-word}
+.fc .ko{font-size:clamp(20px,5.4vw,26px);font-weight:500;margin:0;line-height:1.35}
+.fc .def{font-family:var(--display);font-size:16px;color:var(--muted);margin:0;line-height:1.45;text-wrap:balance}
+.fc .tap{font-size:12.5px;color:var(--muted)}
+.fcrow{display:flex;gap:9px}
+.fcrow button{flex:1;padding:13px;border-radius:12px;font-weight:600;font-size:15px;border:1.5px solid var(--line);background:var(--surface)}
+.fcrow button.know{border-color:var(--good-line);background:var(--good-soft);color:var(--good)}
+.fcrow button.dont{border-color:var(--bad-line);background:var(--bad-soft);color:var(--bad)}
+/* 퀴즈 */
+.status{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 3px}
+.counter{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.stats{display:flex;align-items:center;gap:12px}
+.score{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--gold)}
+.hearts{letter-spacing:2px;font-size:14px}
+.combo{font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink);font-family:var(--mono)}
+.track{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:10px}
+.track>i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.timer{height:3px;border-radius:99px;overflow:hidden;margin-top:5px}
+.timer>i{display:block;height:100%;background:var(--accent);border-radius:99px;opacity:.32}
+.qcard{padding:32px 22px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:14px}
+.qkind{font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.qword{font-family:var(--display);font-weight:700;font-size:clamp(30px,8.2vw,46px);line-height:1.15;letter-spacing:-.018em;margin:0;text-wrap:balance;word-break:break-word}
+.qko{font-size:clamp(21px,5.6vw,28px);font-weight:500;margin:0;line-height:1.35;text-wrap:balance}
+.qdef{font-family:var(--display);font-size:clamp(18px,4.8vw,23px);font-weight:500;margin:0;line-height:1.4;text-wrap:balance}
+.qhint{font-family:var(--display);font-size:14.5px;color:var(--muted);margin:0;line-height:1.4}
+.qpos{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.answers{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.ans{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:14px 15px;font-size:16px;line-height:1.4;transition:.14s}
+.ans:hover:not(:disabled){border-color:var(--accent)}
+.ans:disabled{cursor:default}
+.key{flex:none;width:24px;height:24px;display:grid;place-items:center;font-family:var(--mono);font-size:12px;border-radius:7px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted)}
+.ans.is-good{background:var(--good-soft);border-color:var(--good-line)} .ans.is-good .key{background:var(--good);border-color:var(--good);color:var(--surface)}
+.ans.is-bad{background:var(--bad-soft);border-color:var(--bad-line)} .ans.is-bad .key{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.spellrow{display:flex;gap:9px}
+.spellrow input{flex:1;font-family:var(--display);font-size:22px;font-weight:600;padding:13px 15px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.spellrow input:focus{outline:none;border-color:var(--accent)}
+.spellrow button{flex:none;padding:0 20px;border-radius:12px;border:1.5px solid var(--accent);background:var(--accent);color:#fff;font-weight:600}
+:root[data-theme="dark"] .spellrow button,:root:not([data-theme="light"]) .spellrow button{color:#171026}
+.blanks{font-family:var(--mono);font-size:19px;letter-spacing:.22em;color:var(--muted)}
+.feedback{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.verdict{display:flex;flex-direction:column;gap:5px;padding:14px 16px;border-radius:12px;border:1.5px solid}
+.verdict.good{background:var(--good-soft);border-color:var(--good-line)} .verdict.bad{background:var(--bad-soft);border-color:var(--bad-line)}
+.verdict .vt{font-size:13px;font-weight:600;letter-spacing:.05em} .verdict.good .vt{color:var(--good)} .verdict.bad .vt{color:var(--bad)}
+.verdict .vb{font-size:15.5px} .verdict .vb b{font-family:var(--display);font-weight:700;font-size:18px}
+.verdict .ve{font-family:var(--display);font-size:13.5px;color:var(--muted)}
+.next{width:100%;background:var(--ink);color:var(--bg);border:0;border-radius:12px;padding:14px;font-size:16px;font-weight:600}
+.final{text-align:center;padding:30px 22px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.final .big{font-family:var(--display);font-weight:700;font-size:56px;line-height:1;color:var(--accent)}
+.final .sub{font-size:14.5px;color:var(--muted)}
+.newbest{font-size:12.5px;font-weight:600;letter-spacing:.06em;color:var(--gold);font-family:var(--mono)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+.cell{background:var(--surface);padding:14px 8px;text-align:center}
+.cell .n{font-family:var(--mono);font-size:21px;font-weight:500} .cell .t{font-size:11.5px;color:var(--muted);letter-spacing:.05em}
+.wrow{display:flex;gap:12px;padding:11px 2px;border-top:1px solid var(--line);align-items:baseline;flex-wrap:wrap}
+.wrow:first-child{border-top:0}
+.wrow .ww{font-family:var(--display);font-weight:700;font-size:17.5px;flex:none;min-width:36%}
+.wrow .wk{font-size:14.5px;color:var(--muted)} .wrow .we{font-family:var(--display);font-size:13px;color:var(--muted);flex-basis:100%}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap}
+.btnrow button{flex:1 1 140px;padding:13px;border-radius:12px;font-weight:600;font-size:15px;border:1.5px solid var(--line);background:var(--surface)}
+.btnrow button.primary{flex:1 1 140px;padding:13px;font-size:15px;border-radius:12px;width:auto}
+.foot{text-align:center;font-size:12px;color:var(--muted);margin-top:auto;padding-top:8px;font-family:var(--display)}
+.pop{animation:pop .26s ease} @keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pop{animation:none}.track>i{transition:none}}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="brand" id="brand" title="처음으로">호민쌤<em>단어장</em></h1>
+    <span class="tag">Ryan's Edge English</span>
+  </header>
+
+  <!-- 자료 목록 -->
+  <section id="home" class="lib"></section>
+
+  <!-- 자료 설정 -->
+  <section id="setup" class="card pad setup" hidden>
+    <div class="sectitle"><button class="back" id="back1">‹ 목록</button><h2 id="mTitle"></h2><span class="sub" id="mSub"></span></div>
+    <div class="field"><span class="label">범위</span><div class="chips" id="pickGroup"></div></div>
+    <div class="field"><span class="label">활동</span><div class="chips" id="pickAct"></div><p class="hint" id="actHint"></p></div>
+    <div id="testOpts" class="setup" style="gap:18px">
+      <div class="field"><span class="label">문제 방식</span><div class="chips" id="pickMode"></div><p class="hint" id="modeHint"></p></div>
+      <div class="field"><span class="label">문항 수</span><div class="chips" id="pickLen"></div></div>
+      <div class="field"><span class="label">제한 시간</span><div class="chips" id="pickTimer"></div></div>
+      <div class="bestline" id="bestLine"></div>
+    </div>
+    <button class="primary" id="startBtn">시작하기</button>
+  </section>
+
+  <!-- 학습: 목록 -->
+  <section id="study" hidden style="display:flex;flex-direction:column;gap:12px">
+    <div class="sectitle"><button class="back" id="back2">‹ 설정</button><h2 id="sTitle"></h2></div>
+    <div class="toolbar"><button class="ghost" id="toggleAll">뜻 모두 가리기</button><button class="ghost" id="shuffleList">순서 섞기</button><span class="hint" id="sCount"></span></div>
+    <div class="card pad wl" id="wordList"></div>
+  </section>
+
+  <!-- 학습: 플래시카드 -->
+  <section id="cards" hidden style="display:flex;flex-direction:column;gap:12px">
+    <div class="sectitle"><button class="back" id="back3">‹ 설정</button><h2 id="cTitle"></h2><span class="sub" id="cCount"></span></div>
+    <div class="track"><i id="cbar" style="width:0%"></i></div>
+    <div class="card fc pop" id="fcard"></div>
+    <div class="fcrow"><button class="dont" id="fcDont">다시 볼래요</button><button class="know" id="fcKnow">알아요</button></div>
+    <div class="fcrow"><button id="fcPrev">‹ 이전</button><button id="fcFlip">뜻 보기 / 숨기기</button><button id="fcNext">다음 ›</button></div>
+  </section>
+
+  <!-- 테스트 -->
+  <section id="quiz" hidden>
+    <div class="status"><span class="counter" id="counter"></span><span class="stats"><span class="combo" id="combo" hidden></span><span class="hearts" id="hearts"></span><span class="score" id="score">0</span></span></div>
+    <div class="track"><i id="bar" style="width:0%"></i></div>
+    <div class="timer"><i id="tbar" style="width:100%"></i></div>
+    <div class="card qcard" id="qcard"></div>
+    <div id="answers" class="answers"></div>
+    <div id="feedback" class="feedback"></div>
+  </section>
+
+  <!-- 결과 -->
+  <section id="result" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="card final" id="finalCard"></div>
+    <div class="grid3" id="finalStats"></div>
+    <div id="wrongWrap"></div>
+    <div class="btnrow" id="againRow"></div>
+  </section>
+
+  <p class="foot">Ryan's Edge English, 호민쌤단어장</p>
+</div>
+
+<script>
+const LIBRARY = [{"id": "2026-g2-oct", "title": "2026학년도 2학년 10월 모의고사", "subtitle": "18~24번, 29~42번 고교 필수 어휘 (품사, 뜻, 영영풀이)", "added": "2026.10", "groups": [{"name": "18번", "words": [{"w": "express", "p": "v.", "k": "표현하다, 나타내다", "e": "to show or tell what you think or feel"}, {"w": "concern", "p": "n.", "k": "우려, 걱정", "e": "a feeling of worry about something important"}, {"w": "security", "p": "n.", "k": "안전, 보안", "e": "the things that are done to keep a place or person safe"}, {"w": "incident", "p": "n.", "k": "사건", "e": "an event, especially one that is unpleasant or unusual"}, {"w": "propose", "p": "v.", "k": "제안하다", "e": "to suggest a plan or idea for people to consider"}, {"w": "measure", "p": "n.", "k": "방안, 조치", "e": "an official action taken to deal with a problem"}, {"w": "privacy", "p": "n.", "k": "사생활", "e": "the state of being free from being watched or disturbed by others"}, {"w": "prevent A from V-ing", "p": "숙어", "k": "A가 ~하는 것을 막다", "e": "to stop someone from doing something"}, {"w": "outsider", "p": "n.", "k": "외부인", "e": "a person who does not belong to a particular group or place"}, {"w": "exposure", "p": "n.", "k": "노출", "e": "the state of being in a situation where you are not protected from something harmful"}, {"w": "external", "p": "a.", "k": "외부의", "e": "coming from or existing outside a place or group"}, {"w": "additionally", "p": "ad.", "k": "게다가, 추가적으로", "e": "used to add another fact or point to what has been said"}, {"w": "entrance", "p": "n.", "k": "출입구, 입구", "e": "a door or gate through which you go into a place"}, {"w": "detect", "p": "v.", "k": "감지하다, 탐지하다", "e": "to notice or discover something that is not easy to see"}, {"w": "unauthorized", "p": "a.", "k": "무단의, 허가받지 않은", "e": "done or entered without official permission from the people in charge"}, {"w": "access", "p": "n.", "k": "출입, 접근", "e": "the right or chance to enter a place"}, {"w": "respond to", "p": "구동사", "k": "~에 대응하다, 반응하다", "e": "to do something as a reaction to an event or situation"}, {"w": "on behalf of", "p": "숙어", "k": "~을 대표하여, ~을 대신하여", "e": "as the representative of someone, or instead of them"}, {"w": "consider", "p": "v.", "k": "고려하다, 숙고하다", "e": "to think carefully about something before deciding"}]}, {"name": "19번", "words": [{"w": "performance", "p": "n.", "k": "공연", "e": "the act of singing, acting, or playing music in front of people"}, {"w": "melody", "p": "n.", "k": "선율, 멜로디", "e": "a series of musical notes that form a pleasing tune"}, {"w": "tune", "p": "n.", "k": "곡조, 선율", "e": "a series of musical notes that are pleasant to listen to"}, {"w": "over and over", "p": "숙어", "k": "반복해서, 되풀이하여", "e": "many times, again and again, in a repeated way"}, {"w": "lyric", "p": "n.", "k": "(복수형으로) 가사", "e": "the words of a song that people sing"}, {"w": "by heart", "p": "숙어", "k": "외워서, 암기하여", "e": "in a way that you can remember every word exactly"}, {"w": "now that", "p": "conj.", "k": "~이므로, ~이니까", "e": "because something has now happened or is now true"}, {"w": "fade", "p": "v.", "k": "사라지다, 희미해지다", "e": "to slowly disappear or become less clear"}, {"w": "freeze", "p": "v.", "k": "얼어붙다, 굳다", "e": "to suddenly stop moving because of fear or shock"}, {"w": "what if", "p": "숙어", "k": "~하면 어쩌지?", "e": "used to ask what would happen if something bad occurred"}, {"w": "awful", "p": "a.", "k": "끔찍한, 형편없는", "e": "extremely bad, unpleasant, or embarrassing to experience"}, {"w": "take a deep breath", "p": "숙어", "k": "깊게 숨을 들이마시다", "e": "to fill your lungs with air slowly, often to calm down"}, {"w": "shaky", "p": "a.", "k": "떨리는, 흔들리는", "e": "trembling and not steady, often because of fear or nervousness"}, {"w": "at first", "p": "숙어", "k": "처음에는", "e": "in the beginning, before something changed"}, {"w": "rhythm", "p": "n.", "k": "리듬, 박자", "e": "a regular repeated pattern of sounds or movements in music"}, {"w": "weight", "p": "n.", "k": "중압감, 무게", "e": "a heavy feeling of worry or responsibility that is hard to bear"}, {"w": "lift", "p": "v.", "k": "(부담 등이) 사라지다, 들어 올리다", "e": "to go away so that someone no longer feels worried or unhappy"}, {"w": "flow", "p": "v.", "k": "흘러나오다, 술술 나오다", "e": "to come out smoothly and continuously without stopping"}, {"w": "note", "p": "n.", "k": "음, 음표", "e": "a particular musical sound or the sign that represents it"}, {"w": "ring out", "p": "구동사", "k": "울려 퍼지다", "e": "to make a loud, clear sound that can be heard easily"}, {"w": "hesitation", "p": "n.", "k": "주저, 망설임", "e": "the act of pausing before doing something because you are not sure"}]}, {"name": "20번", "words": [{"w": "be full of", "p": "숙어", "k": "~로 가득 차다", "e": "to contain or have a lot of something"}, {"w": "suitable", "p": "a.", "k": "적절한, 알맞은", "e": "right or acceptable for a particular purpose or situation"}, {"w": "pace", "p": "n.", "k": "속도", "e": "the speed at which something happens or develops"}, {"w": "spontaneously", "p": "ad.", "k": "자발적으로, 자연스럽게", "e": "in a natural way, without being planned or forced"}, {"w": "curiosity", "p": "n.", "k": "호기심", "e": "a strong desire to know or learn about something"}, {"w": "independence", "p": "n.", "k": "독립(심), 자립", "e": "the ability to do things and make decisions by yourself"}, {"w": "dare to V", "p": "숙어", "k": "감히 ~하다, 담대하게 ~하다", "e": "to be brave enough to do something difficult or risky"}, {"w": "possess", "p": "v.", "k": "갖다, 소유하다", "e": "to have or own a particular quality or thing"}, {"w": "initiative", "p": "n.", "k": "주도성, 솔선", "e": "the ability to decide and act on your own without being told"}, {"w": "shape", "p": "v.", "k": "(틀에 맞춰) 만들다", "e": "to make something develop in a particular form or way"}, {"w": "ideal", "p": "a.", "k": "이상적인", "e": "as good or suitable as you can imagine, without any faults"}, {"w": "gradually", "p": "ad.", "k": "점점, 서서히", "e": "slowly over a period of time, little by little"}, {"w": "autonomy", "p": "n.", "k": "자율성", "e": "the freedom to make your own decisions and control your own life"}, {"w": "become accustomed to", "p": "숙어", "k": "~에 익숙해지다", "e": "to get used to something so that it seems normal"}, {"w": "instruction", "p": "n.", "k": "지시", "e": "a statement telling someone what to do"}, {"w": "sense of direction", "p": "n.", "k": "방향 감각", "e": "the ability to know where you are going or what you want in life"}, {"w": "be used to V-ing", "p": "숙어", "k": "~하는 데 익숙하다", "e": "to be familiar with something because you have done it many times"}, {"w": "arrange", "p": "v.", "k": "(미리) 정해 주다, 마련하다", "e": "to plan or organize something for someone in advance"}, {"w": "rather than", "p": "숙어", "k": "~보다는, ~ 대신에", "e": "instead of something or someone else"}, {"w": "fertile", "p": "a.", "k": "기름진, 비옥한", "e": "able to produce a lot of good crops or plants"}, {"w": "carve out", "p": "구동사", "k": "조각해 내다, 깎아서 만들다", "e": "to make something by cutting it from wood or stone"}, {"w": "according to", "p": "숙어", "k": "~에 따라, ~에 의하면", "e": "in a way that agrees with or follows something"}, {"w": "will", "p": "n.", "k": "의지, 뜻", "e": "a strong determination or desire to do what you have decided"}, {"w": "core", "p": "n.", "k": "핵심", "e": "the most important or central part of something"}]}, {"name": "21번", "words": [{"w": "worldview", "p": "n.", "k": "세계관", "e": "the way a person understands and thinks about the world"}, {"w": "rate", "p": "n.", "k": "이율, 비율", "e": "a fixed amount charged or paid, shown as a percentage"}, {"w": "interest", "p": "n.", "k": "이자", "e": "extra money that you pay or receive for borrowing or lending money"}, {"w": "perception", "p": "n.", "k": "인식", "e": "the way you understand or think about something"}, {"w": "per", "p": "prep.", "k": "~당, ~마다", "e": "for each unit of time, amount, or number"}, {"w": "reflect", "p": "v.", "k": "반영하다", "e": "to show or express the nature of something"}, {"w": "repay", "p": "v.", "k": "(돈을) 갚다, 상환하다", "e": "to give back money that you have borrowed"}, {"w": "opportunity cost", "p": "n.", "k": "기회비용", "e": "the value of what you give up when you choose one thing over another"}, {"w": "term", "p": "n.", "k": "기간, 용어", "e": "the fixed period of time that an agreement lasts"}, {"w": "loan", "p": "n.", "k": "대출(금)", "e": "an amount of money that you borrow and must give back"}, {"w": "pay back", "p": "구동사", "k": "(돈을) 갚다", "e": "to return money that you owe to someone"}, {"w": "by definition", "p": "숙어", "k": "정의상, 당연히", "e": "because of the basic nature of something"}, {"w": "unknowable", "p": "a.", "k": "알 수 없는", "e": "impossible for anyone to find out or be certain about"}, {"w": "in order to V", "p": "숙어", "k": "~하기 위하여", "e": "with the purpose or intention of doing something"}, {"w": "worthwhile", "p": "a.", "k": "가치 있는", "e": "useful or important enough to deserve the time, money, or effort"}, {"w": "lender", "p": "n.", "k": "빌려주는 사람, 대출 기관", "e": "a person or organization that lets someone borrow money"}, {"w": "borrower", "p": "n.", "k": "빌리는 사람, 차용인", "e": "a person who takes money from someone and must pay it back"}, {"w": "income", "p": "n.", "k": "소득, 수입", "e": "money that a person or organization receives regularly"}, {"w": "factor in", "p": "구동사", "k": "~을 고려하다, 계산에 넣다", "e": "to include something when making a calculation or decision"}, {"w": "to put it another way", "p": "숙어", "k": "달리 말하면", "e": "used to explain something again using different words"}, {"w": "worth", "p": "a.", "k": "~의 가치가 있는", "e": "having a particular value, especially in money"}, {"w": "a bird in the hand is worth two in the bush", "p": "숙어", "k": "손 안의 새 한 마리가 숲속의 두 마리보다 낫다(확실한 것이 불확실한 것보다 낫다)", "e": "it is better to keep what you have now than to risk it for something uncertain"}]}, {"name": "22번", "words": [{"w": "increasingly", "p": "ad.", "k": "점점 더", "e": "more and more over a period of time"}, {"w": "ethical", "p": "a.", "k": "윤리적인", "e": "relating to beliefs about what is morally right and wrong"}, {"w": "consideration", "p": "n.", "k": "고려 사항, 고려", "e": "something that must be thought about when making a decision"}, {"w": "awareness", "p": "n.", "k": "인식", "e": "knowledge or understanding that something exists or is important"}, {"w": "sustainability", "p": "n.", "k": "지속가능성", "e": "the ability to continue without harming the environment or using up resources"}, {"w": "call upon A to V", "p": "숙어", "k": "A에게 ~하도록 요구하다", "e": "to formally ask someone to do something"}, {"w": "broad", "p": "a.", "k": "폭넓은, 넓은", "e": "including many different things or people"}, {"w": "impact", "p": "n.", "k": "영향, 효과", "e": "a strong effect or influence that something has on someone"}, {"w": "address", "p": "v.", "k": "(문제 등을) 다루다", "e": "to deal with or discuss a problem or subject"}, {"w": "justice", "p": "n.", "k": "정의", "e": "the quality of being fair and treating people equally"}, {"w": "consumerism", "p": "n.", "k": "소비주의", "e": "the belief or practice of buying and using a lot of goods"}, {"w": "platform", "p": "n.", "k": "발언 기반, 플랫폼", "e": "a chance or means to express your ideas to many people"}, {"w": "promote", "p": "v.", "k": "홍보하다, 촉진하다", "e": "to help sell a product or to help something develop"}, {"w": "sustainable", "p": "a.", "k": "지속가능한", "e": "able to continue for a long time without harming the environment"}, {"w": "cause", "p": "n.", "k": "대의(명분), 원인", "e": "an aim or idea that people support or fight for"}, {"w": "related to", "p": "숙어", "k": "~와 관련된", "e": "connected with a particular subject or thing"}, {"w": "equality", "p": "n.", "k": "평등", "e": "the state of all people having the same rights and chances"}, {"w": "raise awareness", "p": "숙어", "k": "인식을 높이다", "e": "to make more people know about a problem or issue"}, {"w": "drive", "p": "v.", "k": "이끌어내다, 추진하다", "e": "to make something happen or develop"}, {"w": "not only A but also B", "p": "숙어", "k": "A뿐만 아니라 B도", "e": "used to say that two things are both true"}, {"w": "focus on", "p": "구동사", "k": "~에 집중하다, 초점을 맞추다", "e": "to give most of your attention to one thing"}, {"w": "ensure", "p": "v.", "k": "반드시 ~하게 하다, 보장하다", "e": "to make certain that something happens"}, {"w": "align with", "p": "구동사", "k": "~와 일치하다", "e": "to agree with or match something"}, {"w": "principle", "p": "n.", "k": "원칙", "e": "a basic belief or rule about what is right that guides behavior"}]}, {"name": "23번", "words": [{"w": "neurobiology", "p": "n.", "k": "신경 생물학", "e": "the scientific study of the nervous system and how it works"}, {"w": "possess", "p": "v.", "k": "갖다, 소유하다", "e": "to have or own something such as a quality or ability"}, {"w": "roughly", "p": "ad.", "k": "대략, 거의", "e": "about or approximately, not an exact number"}, {"w": "neuron", "p": "n.", "k": "뉴런, 신경 세포", "e": "a cell that carries signals between the brain and other parts of the body"}, {"w": "locate", "p": "v.", "k": "(특정 위치에) 두다, 자리 잡게 하다", "e": "to put or set something in a particular place or position"}, {"w": "distribute", "p": "v.", "k": "분포시키다, 나누어 주다", "e": "to spread something over an area or among several places"}, {"w": "rather than", "p": "숙어", "k": "~보다는, ~ 대신에", "e": "instead of something or someone else"}, {"w": "concentrate", "p": "v.", "k": "집중시키다, 한곳에 모으다", "e": "to bring or gather something together in one place"}, {"w": "capable of", "p": "숙어", "k": "~할 수 있는", "e": "having the ability or power to do something"}, {"w": "respond to", "p": "숙어", "k": "~에 반응하다, ~에 대응하다", "e": "to react to something that has happened or been done"}, {"w": "function as", "p": "숙어", "k": "~의 역할을 하다, ~로 기능하다", "e": "to work or serve in the role of something"}, {"w": "sensory", "p": "a.", "k": "감각의", "e": "relating to the physical senses such as touch, sight or taste"}, {"w": "input", "p": "n.", "k": "입력(된 정보)", "e": "information that is received and used by a system"}, {"w": "locally", "p": "ad.", "k": "국소적으로, 현지에서", "e": "in or within a particular limited area or part"}, {"w": "extension", "p": "n.", "k": "연장(선), 확장", "e": "a part that is added to something to make it longer or larger"}, {"w": "nervous system", "p": "n.", "k": "신경계", "e": "the network of nerves and the brain that controls the body and its senses"}, {"w": "interact with", "p": "숙어", "k": "~와 상호 작용하다", "e": "to act on or communicate with something and be affected by it"}, {"w": "play a role in", "p": "숙어", "k": "~에서 역할을 하다", "e": "to have an important part or effect in something"}, {"w": "line", "p": "v.", "k": "~을 따라 늘어서다, 안을 대다", "e": "to form a row along the edge or surface of something"}, {"w": "grip", "p": "n.", "k": "붙잡는 힘, 쥐기", "e": "a firm hold that keeps something from slipping away"}, {"w": "detect", "p": "v.", "k": "탐지하다, 감지하다", "e": "to notice or discover something that is not easy to see"}, {"w": "marine", "p": "a.", "k": "해양의, 바다의", "e": "relating to the sea and the creatures that live in it"}, {"w": "in practical terms", "p": "숙어", "k": "실질적으로 말해서", "e": "when you consider what actually happens in real situations"}, {"w": "effectively", "p": "ad.", "k": "사실상, 효과적으로", "e": "in fact, although not officially or exactly so"}]}, {"name": "24번", "words": [{"w": "consistent", "p": "a.", "k": "일관적인, 한결같은", "e": "always behaving or thinking in the same way"}, {"w": "have difficulty V-ing", "p": "숙어", "k": "~하는 데 어려움이 있다", "e": "to find it hard to do something"}, {"w": "justify", "p": "v.", "k": "정당화하다", "e": "to give an acceptable reason for something so that it seems right"}, {"w": "slavery", "p": "n.", "k": "노예 제도", "e": "the system of owning people and forcing them to work for no pay"}, {"w": "era", "p": "n.", "k": "시대", "e": "a long period of history marked by particular events or features"}, {"w": "philosopher", "p": "n.", "k": "철학자", "e": "a person who studies and writes about the nature of truth, knowledge and life"}, {"w": "privilege", "p": "n.", "k": "특권", "e": "a special advantage or right that only some people have"}, {"w": "practice", "p": "n.", "k": "관행, 실천, 습관", "e": "something that people do regularly as a custom or habit"}, {"w": "contemplation", "p": "n.", "k": "사색, 숙고", "e": "deep and serious thinking about something for a long time"}, {"w": "worthy", "p": "a.", "k": "~할 만한, 자격이 있는", "e": "deserving something because of one's qualities or actions"}, {"w": "somehow", "p": "ad.", "k": "왠지, 어쩐지", "e": "for a reason that is not clear or easy to explain"}, {"w": "assertion", "p": "n.", "k": "주장", "e": "a strong statement that something is true"}, {"w": "oddly", "p": "ad.", "k": "이상하게, 기묘하게", "e": "in a way that is strange or unexpected"}, {"w": "self-serving", "p": "a.", "k": "자기 잇속만 차리는", "e": "concerned only with one's own advantage rather than other people's"}, {"w": "serve", "p": "v.", "k": "(~에게) 도움이 되다, 유익하다", "e": "to be useful or helpful to someone"}, {"w": "be no exception", "p": "숙어", "k": "예외가 아니다", "e": "to be like all the others, not different from them"}, {"w": "flourishing", "p": "n.", "k": "번영, 번성", "e": "the state of growing or developing well and successfully"}, {"w": "inclusive", "p": "a.", "k": "포용적인, 포괄적인", "e": "including many different kinds of people and treating them fairly"}, {"w": "indicator", "p": "n.", "k": "지표, 척도", "e": "a sign or measure that shows what a situation is like"}, {"w": "privileged", "p": "a.", "k": "특권을 가진", "e": "having special advantages that most people do not have"}, {"w": "elite", "p": "n.", "k": "엘리트, 상류층", "e": "the group of people with the most power, wealth or influence in a society"}, {"w": "tend to V", "p": "숙어", "k": "~하는 경향이 있다", "e": "to usually do a particular thing or behave in a certain way"}, {"w": "as a result", "p": "숙어", "k": "그 결과, 결과적으로", "e": "because of something that happened before"}, {"w": "for all", "p": "숙어", "k": "~에도 불구하고", "e": "despite something that is true or good about it"}, {"w": "flawed", "p": "a.", "k": "결함이 있는", "e": "having a mistake or weakness that makes something not perfect"}]}, {"name": "29번", "words": [{"w": "think of A as B", "p": "숙어", "k": "A를 B로 여기다", "e": "to consider or regard one thing as being another"}, {"w": "hurdle", "p": "n.", "k": "허들, 장애물", "e": "a frame to jump over in a race, or a problem that must be dealt with"}, {"w": "clear", "p": "v.", "k": "(장애물을) 넘다, 치우다", "e": "to jump over something without touching it"}, {"w": "demographically", "p": "ad.", "k": "인구 통계학적으로", "e": "in terms of the size and structure of human populations"}, {"w": "humankind", "p": "n.", "k": "인류", "e": "all human beings considered as a group"}, {"w": "wasteful", "p": "a.", "k": "낭비하는, 헛되이 쓰는", "e": "using more of something than is needed, so that much is lost"}, {"w": "in the wild", "p": "숙어", "k": "야생에서, 자연 상태에서", "e": "in natural areas, not kept or raised by people"}, {"w": "fairly", "p": "ad.", "k": "꽤, 상당히", "e": "to some degree but not completely"}, {"w": "typical", "p": "a.", "k": "전형적인", "e": "having the usual features of a particular kind of thing"}, {"w": "primate", "p": "n.", "k": "영장류", "e": "a member of the group of animals that includes humans, apes and monkeys"}, {"w": "infant", "p": "n.", "k": "유아, 아기", "e": "a baby or very young child"}, {"w": "mortality", "p": "n.", "k": "사망률, 죽음", "e": "the number of deaths in a group during a particular period"}, {"w": "agricultural", "p": "a.", "k": "농업의", "e": "relating to farming and growing crops"}, {"w": "be similar to", "p": "숙어", "k": "~와 비슷하다", "e": "to be almost the same as something else"}, {"w": "ape", "p": "n.", "k": "유인원", "e": "a large animal like a monkey without a tail, such as a gorilla or chimpanzee"}, {"w": "hunter-gatherer", "p": "n.", "k": "수렵 채집인", "e": "a member of a society that lives by hunting animals and collecting wild plants"}, {"w": "ancestor", "p": "n.", "k": "조상", "e": "a member of one's family who lived a long time ago"}, {"w": "fail to V", "p": "숙어", "k": "~하지 못하다", "e": "to not succeed in doing something"}, {"w": "reproduce", "p": "v.", "k": "번식하다, 재생하다", "e": "to have babies or young so that a species continues"}, {"w": "just about", "p": "숙어", "k": "거의", "e": "almost, or very nearly but not completely"}, {"w": "otherwise", "p": "ad.", "k": "다르게, 그렇지 않으면", "e": "in a different way, or if things had been different"}, {"w": "population", "p": "n.", "k": "인구", "e": "the number of people living in a country or area"}]}, {"name": "30번", "words": [{"w": "confirm", "p": "v.", "k": "확인해 주다, 입증하다", "e": "to show that something is definitely true"}, {"w": "dominance", "p": "n.", "k": "우위, 지배", "e": "the fact of being more powerful or important than others"}, {"w": "nonverbal", "p": "a.", "k": "비언어적인", "e": "not using words, such as through facial expressions or gestures"}, {"w": "phenomenon", "p": "n.", "k": "현상", "e": "something that happens or exists, especially something that can be studied"}, {"w": "pronounced", "p": "a.", "k": "두드러진, 뚜렷한", "e": "very noticeable or easy to see"}, {"w": "find oneself in", "p": "숙어", "k": "(어떤 상황에) 처하게 되다", "e": "to realize that one is in a particular situation"}, {"w": "conflicting", "p": "a.", "k": "모순되는, 상충하는", "e": "opposing each other so that both cannot be true at the same time"}, {"w": "verbal", "p": "a.", "k": "언어의, 말의", "e": "relating to or expressed in spoken words"}, {"w": "differ", "p": "v.", "k": "다르다", "e": "to be not the same as something else"}, {"w": "attempt", "p": "n.", "k": "시도", "e": "an act of trying to do something"}, {"w": "manipulate", "p": "v.", "k": "조종하다, 조작하다", "e": "to control or influence someone in a clever and unfair way"}, {"w": "verbally", "p": "ad.", "k": "말로, 언어적으로", "e": "by using spoken words rather than actions or writing"}, {"w": "be likely to V", "p": "숙어", "k": "~할 가능성이 있다, ~하기 쉽다", "e": "to be expected or probable to do something"}, {"w": "accompanying", "p": "a.", "k": "동반되는, 수반하는", "e": "appearing or happening together with something else"}, {"w": "match", "p": "v.", "k": "~와 일치하다, ~에 어울리다", "e": "to be the same as or go well with something else"}, {"w": "look away", "p": "구동사", "k": "눈길을 돌리다", "e": "to turn one's eyes in another direction from someone or something"}, {"w": "force a smile", "p": "숙어", "k": "억지웃음을 짓다", "e": "to make one's face look happy when one does not feel happy"}, {"w": "be inclined to V", "p": "숙어", "k": "~하고 싶어 하다, ~하는 경향이 있다", "e": "to be likely or willing to do something"}, {"w": "colleague", "p": "n.", "k": "동료", "e": "a person one works with, especially in a profession"}, {"w": "sour", "p": "a.", "k": "언짢은, 시큰둥한, (맛이) 신", "e": "unfriendly or showing that one is unhappy"}, {"w": "take over", "p": "구동사", "k": "떠맡다, 인계받다", "e": "to begin doing a job or duty that someone else was doing"}, {"w": "workload", "p": "n.", "k": "업무량, 작업량", "e": "the amount of work that a person has to do"}]}, {"name": "31번", "words": [{"w": "overwhelming", "p": "a.", "k": "압도적인", "e": "very great in amount or much larger than anything else"}, {"w": "majority", "p": "n.", "k": "대다수, 대부분", "e": "most of the people or things in a group"}, {"w": "pack", "p": "v.", "k": "채워 넣다, 싸다", "e": "to put a lot of things tightly into a space"}, {"w": "run on", "p": "구동사", "k": "~에 따라 작동하다, ~로 움직이다", "e": "to operate or work by using a particular thing"}, {"w": "lay down", "p": "구동사", "k": "정하다, 규정하다", "e": "to establish a rule or pattern that is then followed"}, {"w": "inspect", "p": "v.", "k": "점검하다, 검사하다", "e": "to look at something carefully to check that it is all right"}, {"w": "in one light", "p": "숙어", "k": "어떤 관점에서 보면", "e": "when seen or considered from one particular point of view"}, {"w": "triumph", "p": "n.", "k": "승리, 대성공", "e": "a great success or victory that brings pride"}, {"w": "consciously", "p": "ad.", "k": "의식적으로", "e": "in a deliberate way, knowing what one is doing"}, {"w": "make it", "p": "숙어", "k": "해내다, (목적지에) 이르다", "e": "to succeed in reaching a place or doing something"}, {"w": "deliberate", "p": "a.", "k": "신중한, 의도적인", "e": "done slowly and carefully after thinking about it"}, {"w": "costly", "p": "a.", "k": "비용이 많이 드는, 대가가 큰", "e": "using a lot of money, time or effort"}, {"w": "in real time", "p": "숙어", "k": "실시간으로", "e": "at the very moment that something is actually happening"}, {"w": "outcompete", "p": "v.", "k": "경쟁에서 이기다", "e": "to defeat others by doing better in a contest for survival"}, {"w": "automation", "p": "n.", "k": "자동화", "e": "the use of systems that work by themselves without people controlling them"}, {"w": "precisely", "p": "ad.", "k": "바로, 정확히", "e": "exactly, used to emphasize a particular point"}, {"w": "free", "p": "v.", "k": "해방하다, 자유롭게 하다", "e": "to release someone from duties or things that limit them"}, {"w": "default", "p": "n.", "k": "기본 설정, 초기 상태", "e": "the way something works or is set unless it is changed"}, {"w": "flaw", "p": "n.", "k": "결함", "e": "a mistake or weakness that makes something not perfect"}, {"w": "arguably", "p": "ad.", "k": "거의 틀림없이, 주장하건대", "e": "used to say that there are good reasons to think something is true"}, {"w": "affordable", "p": "a.", "k": "감당할 수 있는, (가격이) 알맞은", "e": "not too expensive or demanding for someone to manage"}, {"w": "at all", "p": "숙어", "k": "조금이라도, 도대체", "e": "in any way or to any degree, used for emphasis"}]}, {"name": "32번", "words": [{"w": "mass culture", "p": "n.", "k": "대중문화", "e": "the ideas, arts and entertainment shared by most people in a society"}, {"w": "factor", "p": "n.", "k": "요인, 요소", "e": "one of several things that causes or influences a situation"}, {"w": "weaken", "p": "v.", "k": "약화시키다", "e": "to make something less strong or less powerful"}, {"w": "tie", "p": "n.", "k": "유대, 관계", "e": "a strong connection between people or groups"}, {"w": "unite", "p": "v.", "k": "결합시키다, 통합하다", "e": "to join people or things together as one group"}, {"w": "intermediary", "p": "a.", "k": "중간의, 매개의", "e": "acting as a link between two people or groups"}, {"w": "institution", "p": "n.", "k": "제도, 기관", "e": "a large important organization or an established custom in society"}, {"w": "diminish", "p": "v.", "k": "축소시키다, 줄이다", "e": "to make something become smaller or less important"}, {"w": "overlap", "p": "v.", "k": "중첩되다, 겹치다", "e": "to cover part of the same area or role as something else"}, {"w": "harmonious", "p": "a.", "k": "조화로운", "e": "working together peacefully and without any conflict"}, {"w": "collective", "p": "a.", "k": "집단의, 공동의", "e": "shared by or involving all the members of a group"}, {"w": "turn to", "p": "숙어", "k": "~에 의존하다, ~에 의지하다", "e": "to go to someone or something for help or support"}, {"w": "put pressure on", "p": "숙어", "k": "~에 압박을 가하다", "e": "to try hard to force someone to do something"}, {"w": "judicial", "p": "a.", "k": "사법의, 재판의", "e": "relating to courts of law or judges"}, {"w": "mediated", "p": "a.", "k": "미디어를 통해 전달된, 매개된", "e": "passed on to people through the media rather than directly"}, {"w": "politicize", "p": "v.", "k": "정치화하다", "e": "to make something a political issue"}, {"w": "popularize", "p": "v.", "k": "대중화하다", "e": "to make something known and liked by many people"}, {"w": "habitual", "p": "a.", "k": "습관적인", "e": "done regularly as a usual or fixed practice"}, {"w": "public square", "p": "n.", "k": "공공 광장, 공론의 장", "e": "an open area in a town where people gather and debate"}, {"w": "convert", "p": "v.", "k": "전환하다, 바꾸다", "e": "to change something into a different form"}, {"w": "virtual", "p": "a.", "k": "가상의", "e": "existing on computers or the internet rather than in the real world"}, {"w": "dimension", "p": "n.", "k": "차원, 영역", "e": "a particular part or aspect of a situation"}, {"w": "appropriate", "p": "a.", "k": "적절한, 알맞은", "e": "suitable or right for a particular situation"}, {"w": "immune to", "p": "숙어", "k": "~에 영향을 받지 않는, ~에 면역이 있는", "e": "not affected or influenced by something that harms others"}]}, {"name": "33번", "words": [{"w": "ongoing", "p": "a.", "k": "계속 진행 중인", "e": "still continuing to happen or develop at the present time"}, {"w": "flexible", "p": "a.", "k": "유연한, 융통성 있는", "e": "able to change easily according to the situation"}, {"w": "evolve", "p": "v.", "k": "서서히 발전하다, 진화하다", "e": "to develop and change gradually over a long period of time"}, {"w": "rather than", "p": "숙어", "k": "~보다는, ~ 대신에", "e": "instead of something or someone else"}, {"w": "sequence", "p": "n.", "k": "순서, 연속", "e": "a series of things that happen in a particular order"}, {"w": "at the core of", "p": "숙어", "k": "~의 핵심에", "e": "in the most important central part of something"}, {"w": "perspective", "p": "n.", "k": "관점, 시각", "e": "a particular way of thinking about something"}, {"w": "plasticity", "p": "n.", "k": "가소성", "e": "the ability to be changed or shaped by experience"}, {"w": "refer to", "p": "숙어", "k": "~을 지칭하다, ~을 가리키다", "e": "to mean or describe a particular thing"}, {"w": "capacity", "p": "n.", "k": "능력, 수용력", "e": "the ability to do or produce something"}, {"w": "adapt", "p": "v.", "k": "적응하다, 조정하다", "e": "to change in order to suit a new situation"}, {"w": "cognitive", "p": "a.", "k": "인지의, 인지적인", "e": "relating to thinking, understanding and learning"}, {"w": "in response to", "p": "숙어", "k": "~에 반응하여", "e": "as a reaction to something that has happened"}, {"w": "highlight", "p": "v.", "k": "강조하다, 부각하다", "e": "to draw special attention to something important"}, {"w": "merely", "p": "ad.", "k": "단지, 그저", "e": "only this and nothing more or better"}, {"w": "passive", "p": "a.", "k": "수동적인", "e": "accepting what happens without acting or responding"}, {"w": "recipient", "p": "n.", "k": "수용자, 받는 사람", "e": "a person who receives or is given something"}, {"w": "agent", "p": "n.", "k": "행위자, 주체", "e": "a person or thing that causes change or takes action"}, {"w": "be capable of", "p": "숙어", "k": "~할 수 있다, ~할 능력이 있다", "e": "to have the ability or qualities needed to do something"}, {"w": "phase", "p": "n.", "k": "단계, 시기", "e": "one stage in a process of development"}, {"w": "decline", "p": "n.", "k": "쇠퇴, 감소", "e": "a gradual decrease in strength, quality or importance"}, {"w": "challenge", "p": "v.", "k": "이의를 제기하다, 도전하다", "e": "to question whether an idea is right or true"}, {"w": "rigid", "p": "a.", "k": "경직된, 엄격한", "e": "not willing or able to change"}, {"w": "outlook", "p": "n.", "k": "관점, 견해", "e": "a general attitude toward life or a situation"}, {"w": "emphasize", "p": "v.", "k": "강조하다", "e": "to give special importance to something when speaking or writing"}, {"w": "lifespan", "p": "n.", "k": "생애, 수명", "e": "the length of time that a person or animal is alive"}, {"w": "extent", "p": "n.", "k": "정도, 범위", "e": "how large, important or serious something is"}, {"w": "vary", "p": "v.", "k": "다르다, 달라지다", "e": "to be different in different situations or at different times"}, {"w": "allow room for", "p": "숙어", "k": "~의 여지를 허용하다", "e": "to leave a chance or space for something to happen"}, {"w": "transformation", "p": "n.", "k": "변화, 변형", "e": "a complete change in someone or something"}]}, {"name": "34번", "words": [{"w": "alter", "p": "v.", "k": "바꾸다, 변경하다", "e": "to change something in some way"}, {"w": "go viral", "p": "숙어", "k": "입소문이 나다, 빠르게 퍼지다", "e": "to spread very quickly among many people on the internet"}, {"w": "household", "p": "a.", "k": "누구나 아는, 친숙한", "e": "known or talked about by almost everyone"}, {"w": "countless", "p": "a.", "k": "수많은, 셀 수 없이 많은", "e": "so many that they cannot be numbered"}, {"w": "vulnerable", "p": "a.", "k": "취약한, 상처 입기 쉬운", "e": "easily harmed or affected by something bad"}, {"w": "take place", "p": "숙어", "k": "발생하다, 일어나다", "e": "to happen, especially after being planned"}, {"w": "institution", "p": "n.", "k": "기관, 제도", "e": "a large important organization such as a bank or university"}, {"w": "thereby", "p": "ad.", "k": "그렇게 함으로써, 그 결과", "e": "as a result of that action"}, {"w": "buffer", "p": "v.", "k": "완충하다, 보호하다", "e": "to protect something from the harmful effects of something else"}, {"w": "digitization", "p": "n.", "k": "디지털화", "e": "the process of changing information into a form computers can use"}, {"w": "massive", "p": "a.", "k": "막대한, 거대한", "e": "very large in size or amount"}, {"w": "autonomously", "p": "ad.", "k": "자율적으로", "e": "without being controlled by anyone else"}, {"w": "give rise to", "p": "숙어", "k": "~을 초래하다, ~을 일으키다", "e": "to cause something to happen or exist"}, {"w": "infinite", "p": "a.", "k": "무한한", "e": "having no limit or end that can be measured"}, {"w": "potential", "p": "a.", "k": "잠재적인, 가능성 있는", "e": "likely to develop or happen in the future"}, {"w": "breakdown", "p": "n.", "k": "고장, 붕괴", "e": "a failure of a system or machine to work properly"}, {"w": "interdependence", "p": "n.", "k": "상호 의존성", "e": "a situation in which people or things rely on each other"}, {"w": "breeding ground", "p": "n.", "k": "온상", "e": "a place or situation where something bad develops easily"}, {"w": "bump up against", "p": "숙어", "k": "~와 부딪치다", "e": "to come into contact or conflict with something"}, {"w": "predict", "p": "v.", "k": "예측하다", "e": "to say what will happen in the future"}, {"w": "vulnerability", "p": "n.", "k": "취약성, 취약점", "e": "a weakness that makes something easy to harm or attack"}, {"w": "interconnectedness", "p": "n.", "k": "상호 연결성", "e": "the state of being linked or related to each other"}]}, {"name": "35번", "words": [{"w": "medical practice", "p": "n.", "k": "의료 행위, 의료 실무", "e": "the work of treating patients and preventing illness"}, {"w": "enormous", "p": "a.", "k": "엄청난, 막대한", "e": "extremely large in size, amount or degree"}, {"w": "prevention", "p": "n.", "k": "예방", "e": "the act of stopping something bad from happening"}, {"w": "infectious", "p": "a.", "k": "전염성의", "e": "able to be passed from one person to another"}, {"w": "breakthrough", "p": "n.", "k": "획기적 발전, 돌파구", "e": "an important discovery that solves a difficult problem"}, {"w": "protect A against B", "p": "숙어", "k": "B로부터 A를 보호하다", "e": "to keep someone or something safe from harm"}, {"w": "exposure", "p": "n.", "k": "노출", "e": "the state of being in contact with something harmful or new"}, {"w": "harmless", "p": "a.", "k": "무해한", "e": "not able to cause any damage or injury"}, {"w": "vaccine", "p": "n.", "k": "백신", "e": "a substance put into the body to protect against a disease"}, {"w": "contribute to", "p": "숙어", "k": "~에 기여하다", "e": "to help make something happen or succeed"}, {"w": "reduction", "p": "n.", "k": "감소", "e": "a decrease in the size, amount or degree of something"}, {"w": "burden", "p": "n.", "k": "부담, 짐", "e": "something heavy or difficult that causes worry or trouble"}, {"w": "bacterial", "p": "a.", "k": "세균성의", "e": "caused by or relating to tiny living things that can cause disease"}, {"w": "viral", "p": "a.", "k": "바이러스성의", "e": "caused by a very small living thing that makes people sick"}, {"w": "lead to", "p": "숙어", "k": "~로 이어지다, ~을 초래하다", "e": "to cause something to happen as a result"}, {"w": "elimination", "p": "n.", "k": "퇴치, 제거", "e": "the complete removal or ending of something"}, {"w": "hygiene", "p": "n.", "k": "위생", "e": "the practice of keeping yourself and your surroundings clean"}, {"w": "measure", "p": "n.", "k": "조치, 방안", "e": "an official action taken to deal with a problem"}, {"w": "therapy", "p": "n.", "k": "치료(법), 요법", "e": "the treatment of an illness or injury over a period of time"}, {"w": "turn A into B", "p": "숙어", "k": "A를 B로 바꾸다", "e": "to change something so that it becomes something different"}, {"w": "chronic", "p": "a.", "k": "만성적인", "e": "lasting a long time and difficult to cure"}, {"w": "manageable", "p": "a.", "k": "관리할 수 있는, 감당할 수 있는", "e": "able to be controlled or dealt with easily"}]}, {"name": "36번", "words": [{"w": "embrace", "p": "v.", "k": "받아들이다, 수용하다", "e": "to accept an idea or belief willingly and eagerly"}, {"w": "in order to", "p": "숙어", "k": "~하기 위해", "e": "with the purpose or intention of doing something"}, {"w": "objectively", "p": "ad.", "k": "객관적으로", "e": "in a way based on facts rather than personal feelings"}, {"w": "interact with", "p": "숙어", "k": "~와 상호 작용하다", "e": "to communicate with or react to someone or something"}, {"w": "interface", "p": "n.", "k": "인터페이스, 접점", "e": "the part of a program or device that the user sees and uses"}, {"w": "shape", "p": "v.", "k": "형성하다, 만들다", "e": "to influence the way something develops"}, {"w": "observation", "p": "n.", "k": "관찰, 관찰 결과", "e": "the act of carefully watching someone or something"}, {"w": "usability", "p": "n.", "k": "사용성, 사용 편의성", "e": "how easy and convenient something is to use"}, {"w": "uncover", "p": "v.", "k": "밝혀내다, 알아내다", "e": "to discover something that was hidden or unknown"}, {"w": "existing", "p": "a.", "k": "현재 있는, 기존의", "e": "present now or already being used at this time"}, {"w": "preference", "p": "n.", "k": "선호, 선호하는 것", "e": "a greater liking for one thing over another"}, {"w": "participant", "p": "n.", "k": "참가자", "e": "a person who takes part in an activity"}, {"w": "engage in", "p": "숙어", "k": "~에 참여하다", "e": "to take part in an activity"}, {"w": "technique", "p": "n.", "k": "기법, 기술", "e": "a particular way of doing something that needs skill"}, {"w": "perform", "p": "v.", "k": "작동하다, 기능하다", "e": "to work or function in a particular way"}, {"w": "in the hands of", "p": "숙어", "k": "~의 수중에, ~의 손에", "e": "being used or controlled by a particular person"}, {"w": "subsequent", "p": "a.", "k": "그 다음의, 차후의", "e": "happening or coming after something else"}, {"w": "revision", "p": "n.", "k": "수정, 개정", "e": "a change made to improve something"}, {"w": "based on", "p": "숙어", "k": "~에 근거하여, ~을 바탕으로", "e": "using something as the starting point or main reason"}, {"w": "finding", "p": "n.", "k": "(조사, 연구의) 결과", "e": "information discovered as the result of research"}, {"w": "representative", "p": "a.", "k": "대표적인", "e": "typical of a larger group of people or things"}]}, {"name": "37번", "words": [{"w": "reappraisal", "p": "n.", "k": "재평가", "e": "the act of thinking about something again in a new way"}, {"w": "present", "p": "v.", "k": "제공하다, 제시하다", "e": "to offer or provide something for people to consider or use"}, {"w": "avenue", "p": "n.", "k": "방법, 수단", "e": "a possible way of achieving something"}, {"w": "regulate", "p": "v.", "k": "조절하다, 규제하다", "e": "to control something so that it works in the right way"}, {"w": "transform", "p": "v.", "k": "변화시키다, 바꾸다", "e": "to change something completely, usually in a good way"}, {"w": "at the root", "p": "숙어", "k": "근본적으로, 근원에서", "e": "at the basic cause or origin of something"}, {"w": "go through", "p": "구동사", "k": "~을 겪다", "e": "to experience a difficult or unpleasant situation"}, {"w": "divorce", "p": "n.", "k": "이혼", "e": "the legal ending of a marriage"}, {"w": "adverse", "p": "a.", "k": "부정적인, 불리한", "e": "harmful or unfavorable to someone or something"}, {"w": "construe", "p": "v.", "k": "해석하다, 이해하다", "e": "to understand the meaning of something in a particular way"}, {"w": "overpowering", "p": "a.", "k": "압도적인, 강렬한", "e": "so strong that it is hard to resist or deal with"}, {"w": "mark", "p": "v.", "k": "(흔적을) 남기다, 영향을 주다", "e": "to have a lasting effect on someone or something"}, {"w": "alternatively", "p": "ad.", "k": "그렇지 않으면, 대신에", "e": "used to suggest another possibility or choice"}, {"w": "lead to", "p": "숙어", "k": "~로 이어지다, ~을 초래하다", "e": "to cause something to happen as a result"}, {"w": "outcome", "p": "n.", "k": "결과", "e": "the final result of an action, process, or event"}, {"w": "in the long run", "p": "숙어", "k": "장기적으로", "e": "over an extended period of time, not immediately"}, {"w": "as a result", "p": "숙어", "k": "그 결과", "e": "because of something that has happened"}, {"w": "construal", "p": "n.", "k": "해석, 이해 방식", "e": "a particular way of understanding or interpreting something"}, {"w": "intense", "p": "a.", "k": "강렬한, 극심한", "e": "very strong or extreme in degree"}, {"w": "crucially", "p": "ad.", "k": "결정적으로, 중요하게는", "e": "in a way that is extremely important"}, {"w": "gratitude", "p": "n.", "k": "감사", "e": "the feeling of being thankful for something"}, {"w": "illustrate", "p": "v.", "k": "(예를 들어) 보여 주다, 설명하다", "e": "to make something clear by giving examples"}, {"w": "consequence", "p": "n.", "k": "결과, 영향", "e": "something that happens as a result of an action or situation"}, {"w": "accumulate", "p": "v.", "k": "축적되다, 쌓이다", "e": "to gradually increase in amount over a period of time"}, {"w": "shape", "p": "v.", "k": "형성하다, 좌우하다", "e": "to have a strong influence on how something develops"}, {"w": "psychological", "p": "a.", "k": "심리적인, 정신적인", "e": "relating to the mind and the way people think and feel"}, {"w": "thereby", "p": "ad.", "k": "그렇게 함으로써, 그로 인해", "e": "as a result of that action or situation"}, {"w": "resilience", "p": "n.", "k": "회복력, 회복 탄력성", "e": "the ability to recover quickly from difficulties or problems"}]}, {"name": "38번", "words": [{"w": "quality", "p": "n.", "k": "질, 품질", "e": "how good or bad something is"}, {"w": "a set of", "p": "숙어", "k": "일련의, 한 세트의", "e": "a group of similar things that belong together"}, {"w": "criterion", "p": "n.", "k": "기준 (복수형 criteria)", "e": "a standard used for judging or deciding something"}, {"w": "benchmark", "p": "n.", "k": "지표, 기준점", "e": "a standard that other things can be measured or judged against"}, {"w": "guideline", "p": "n.", "k": "지침", "e": "an official rule or piece of advice about how to do something"}, {"w": "inform", "p": "v.", "k": "알려 주다", "e": "to tell someone facts or details about something"}, {"w": "physical", "p": "a.", "k": "물리적인, 물질의", "e": "relating to things that can be seen, touched, or measured"}, {"w": "biological", "p": "a.", "k": "생물학적인", "e": "relating to living things and the processes of life"}, {"w": "ensure", "p": "v.", "k": "보장하다, 확실하게 하다", "e": "to make certain that something will happen or be true"}, {"w": "water", "p": "v.", "k": "물을 주다", "e": "to pour liquid on plants or land to help them grow"}, {"w": "crop", "p": "n.", "k": "농작물", "e": "a plant such as wheat or rice that is grown by farmers"}, {"w": "run A through B", "p": "숙어", "k": "A를 B에 통과시키다/흘려보내다", "e": "to make something pass along or inside a machine or system"}, {"w": "industrial", "p": "a.", "k": "산업의, 산업용의", "e": "relating to factories and the making of goods in large amounts"}, {"w": "utilize", "p": "v.", "k": "활용하다, 이용하다", "e": "to use something for a particular purpose"}, {"w": "one size fits all", "p": "숙어", "k": "일률적인, 모두에게 맞는", "e": "meant to be suitable for everyone or every situation"}, {"w": "diverse", "p": "a.", "k": "다양한", "e": "very different from each other and of various kinds"}, {"w": "for instance", "p": "숙어", "k": "예를 들어", "e": "used to give an example of what you mean"}, {"w": "cool down", "p": "구동사", "k": "~을 식히다", "e": "to make something become less hot or lower in temperature"}, {"w": "power plant", "p": "n.", "k": "발전소", "e": "a building or factory where electricity is produced"}, {"w": "generator", "p": "n.", "k": "발전기", "e": "a machine that produces electricity from other forms of energy"}, {"w": "tap", "p": "n.", "k": "수도꼭지", "e": "a device that controls the flow of water from a pipe"}, {"w": "dependent on", "p": "숙어", "k": "~에 따라, ~에 의존하는", "e": "decided or influenced by something else"}]}, {"name": "39번", "words": [{"w": "historian", "p": "n.", "k": "역사가, 역사학자", "e": "a person who studies or writes about events of the past"}, {"w": "draw from", "p": "구동사", "k": "~을 가져와 쓰다, ~에서 끌어내다", "e": "to take or use information or ideas from a particular source"}, {"w": "a variety of", "p": "숙어", "k": "다양한", "e": "many different types of the same thing"}, {"w": "primary source", "p": "n.", "k": "원자료, 1차 자료", "e": "an original document or record made at the time of an event"}, {"w": "emphasize", "p": "v.", "k": "강조하다", "e": "to give special importance or attention to something"}, {"w": "ordinary", "p": "a.", "k": "평범한, 보통의", "e": "average or usual, not special or different in any way"}, {"w": "rather than", "p": "숙어", "k": "~보다는, ~ 대신에", "e": "instead of someone or something else"}, {"w": "elite", "p": "n.", "k": "엘리트, 상류층", "e": "a small group of people with the most power, wealth, or influence"}, {"w": "lack", "p": "v.", "k": "~이 부족하다, ~이 없다", "e": "to not have something or not have enough of it"}, {"w": "access", "p": "n.", "k": "접근(권), 이용 기회", "e": "the right or chance to use or have something"}, {"w": "substantial", "p": "a.", "k": "상당한, 풍부한", "e": "large in amount, value, or degree"}, {"w": "documentation", "p": "n.", "k": "문서로 된 기록, 문서화", "e": "written records that give information about something"}, {"w": "end up", "p": "구동사", "k": "결국 ~에 이르다", "e": "to finally be in a particular place or situation"}, {"w": "archive", "p": "n.", "k": "기록 보관소", "e": "a place where historical documents and records are kept"}, {"w": "preserve", "p": "v.", "k": "보존하다", "e": "to keep something safe from harm or change"}, {"w": "bias", "p": "n.", "k": "편향, 편견", "e": "an unfair tendency to favor one side or view over another"}, {"w": "analyze", "p": "v.", "k": "분석하다", "e": "to examine something carefully in order to understand it"}, {"w": "textual", "p": "a.", "k": "텍스트의, 문서의", "e": "relating to written or printed texts"}, {"w": "official", "p": "n.", "k": "공무원, 관리", "e": "a person who holds a position of authority in a government or organization"}, {"w": "employer", "p": "n.", "k": "고용주", "e": "a person or company that pays people to work for them"}, {"w": "at face value", "p": "숙어", "k": "액면 그대로", "e": "accepting something as it appears without questioning it"}, {"w": "against the grain", "p": "숙어", "k": "결을 거슬러, 통념과 반대로", "e": "in a way that opposes what is usual, expected, or intended"}, {"w": "legal", "p": "a.", "k": "법률의, 법적인", "e": "relating to the law or to lawyers and courts"}, {"w": "examine", "p": "v.", "k": "검토하다, 조사하다", "e": "to look at something carefully in order to learn about it"}, {"w": "interruption", "p": "n.", "k": "단절, 중단", "e": "a break that stops something from continuing"}, {"w": "rumor", "p": "n.", "k": "소문", "e": "information that people talk about but that may not be true"}, {"w": "hint", "p": "n.", "k": "힌트, 단서", "e": "a small piece of information that helps you guess something"}, {"w": "enslaved", "p": "a.", "k": "노예가 된, 노예 상태의", "e": "made to work as a slave and owned by another person"}, {"w": "attitude", "p": "n.", "k": "태도, 사고방식", "e": "the way you think and feel about someone or something"}]}, {"name": "40번", "words": [{"w": "evolve", "p": "v.", "k": "진화하다, 발달하다", "e": "to develop gradually over a long period of time"}, {"w": "specialized", "p": "a.", "k": "특화된, 전문화된", "e": "designed or developed for a particular purpose"}, {"w": "dedicated to", "p": "숙어", "k": "~에 사용되는, ~ 전용의", "e": "used only for one particular purpose"}, {"w": "echolocation", "p": "n.", "k": "반향 정위", "e": "a way of finding objects by sending out sounds and listening for them to bounce back"}, {"w": "process", "p": "v.", "k": "처리하다", "e": "to deal with information by examining and using it"}, {"w": "acoustic", "p": "a.", "k": "음향의, 청각의", "e": "relating to sound or the sense of hearing"}, {"w": "adaptation", "p": "n.", "k": "적응, 적응 구조", "e": "a feature of a living thing that helps it survive in its environment"}, {"w": "auditory", "p": "a.", "k": "청각의", "e": "relating to hearing or the ears"}, {"w": "pathway", "p": "n.", "k": "경로", "e": "a route along which signals or information travel"}, {"w": "transmit", "p": "v.", "k": "전달하다, 전송하다", "e": "to send or pass something from one place to another"}, {"w": "region", "p": "n.", "k": "영역, 부위, 지역", "e": "a particular part or area of something"}, {"w": "responsible for", "p": "숙어", "k": "~을 담당하는, ~에 책임이 있는", "e": "having the duty of dealing with or controlling something"}, {"w": "mammal", "p": "n.", "k": "포유류", "e": "an animal that feeds its young with milk from the mother"}, {"w": "distinct", "p": "a.", "k": "별개의, 뚜렷이 다른", "e": "clearly separate and different from others"}, {"w": "aspect", "p": "n.", "k": "측면, 양상", "e": "one part or feature of a situation, idea, or problem"}, {"w": "focus on", "p": "숙어", "k": "~에 집중하다, ~에 초점을 맞추다", "e": "to give most of your attention to one particular thing"}, {"w": "frequency", "p": "n.", "k": "주파수, 진동수", "e": "the number of sound waves that pass a point each second"}, {"w": "intensity", "p": "n.", "k": "강도, 세기", "e": "the strength or degree of something such as sound or light"}, {"w": "in parallel", "p": "숙어", "k": "병렬로, 동시에", "e": "happening at the same time rather than one after another"}, {"w": "rather than", "p": "숙어", "k": "~보다는, ~ 대신에", "e": "instead of someone or something else"}, {"w": "sequentially", "p": "ad.", "k": "순차적으로", "e": "in an order where one thing follows another"}, {"w": "assembly line", "p": "n.", "k": "조립 라인", "e": "a row of workers and machines that put a product together step by step"}, {"w": "cognitive", "p": "a.", "k": "인지의, 인식의", "e": "relating to the process of thinking and understanding"}, {"w": "load", "p": "n.", "k": "부하, 부담", "e": "the amount of work or effort that something has to handle"}, {"w": "associated with", "p": "숙어", "k": "~과 관련된", "e": "connected with something or caused by it"}, {"w": "simultaneously", "p": "ad.", "k": "동시에", "e": "at exactly the same time as something else"}, {"w": "thereby", "p": "ad.", "k": "그렇게 함으로써, 그로 인해", "e": "as a result of that action or situation"}, {"w": "enable", "p": "v.", "k": "가능하게 하다", "e": "to make it possible for something to happen"}]}, {"name": "41~42번", "words": [{"w": "crucial", "p": "a.", "k": "매우 중요한, 결정적인", "e": "extremely important because it affects what happens"}, {"w": "boredom", "p": "n.", "k": "지루함, 권태", "e": "the feeling you have when you are not interested in anything"}, {"w": "give rise to", "p": "숙어", "k": "~을 발생시키다, ~을 낳다", "e": "to cause something to happen or exist"}, {"w": "despair", "p": "n.", "k": "절망", "e": "the feeling of having no hope at all"}, {"w": "irritation", "p": "n.", "k": "짜증, 화", "e": "the feeling of being annoyed or angry"}, {"w": "adequately", "p": "ad.", "k": "적절하게, 충분히", "e": "in a way that is good enough for a particular purpose"}, {"w": "address", "p": "v.", "k": "(문제 등을) 다루다, 해결하다", "e": "to deal with a problem or try to solve it"}, {"w": "dependent on", "p": "숙어", "k": "~에 의존하는", "e": "needing something in order to be happy or to continue"}, {"w": "arise", "p": "v.", "k": "생기다, 발생하다", "e": "to begin to happen or exist"}, {"w": "idle", "p": "a.", "k": "아무것도 안 하는, 한가한", "e": "not working or being used, or doing nothing"}, {"w": "imply", "p": "v.", "k": "암시하다, 의미하다", "e": "to suggest that something is true without saying it directly"}, {"w": "on one's hands", "p": "숙어", "k": "(시간 등이) 남아돌아, 처리해야 할", "e": "available to be used, often more than is needed"}, {"w": "reflection", "p": "n.", "k": "성찰, 숙고", "e": "careful thought about something over a period of time"}, {"w": "in the presence of", "p": "숙어", "k": "~이 있는 곳에서, ~의 앞에서", "e": "when someone or something is in the same place"}, {"w": "indulgence", "p": "n.", "k": "탐닉, 사치스러운 즐김", "e": "something pleasant that you allow yourself to enjoy"}, {"w": "pastime", "p": "n.", "k": "취미, 오락", "e": "something you do because you enjoy it in your free time"}, {"w": "perceive A as B", "p": "숙어", "k": "A를 B로 인식하다", "e": "to think of or understand something as being a certain thing"}, {"w": "luxury", "p": "n.", "k": "사치, 호사", "e": "something expensive or pleasant that you enjoy but do not need"}, {"w": "manifest", "p": "v.", "k": "나타나다, 드러나다", "e": "to appear or become easy to notice"}, {"w": "occasion", "p": "n.", "k": "기회, 때", "e": "a time or chance when something can be done"}, {"w": "comprehend", "p": "v.", "k": "이해하다", "e": "to understand something fully and clearly"}, {"w": "hazardous", "p": "a.", "k": "위험한", "e": "dangerous and likely to cause harm"}, {"w": "circumstance", "p": "n.", "k": "상황, 환경", "e": "the conditions that affect a situation or event"}, {"w": "paramount", "p": "a.", "k": "가장 중요한, 최고의", "e": "more important than anything else in a situation"}, {"w": "utilize", "p": "v.", "k": "활용하다, 이용하다", "e": "to use something in an effective and practical way"}, {"w": "profound", "p": "a.", "k": "심오한, 깊은", "e": "very deep, serious, or showing great understanding"}, {"w": "rather than", "p": "숙어", "k": "~보다는, ~ 대신에", "e": "instead of something or someone else"}, {"w": "be regarded as", "p": "숙어", "k": "~로 여겨지다", "e": "to be thought of or considered as a particular thing"}, {"w": "constructive", "p": "a.", "k": "건설적인", "e": "useful and likely to improve or help something"}, {"w": "contemplation", "p": "n.", "k": "사색, 숙고", "e": "quiet, serious thought about something for a long time"}]}]}];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle = a => { const b = a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
+const store = { get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} } };
+const BEST_KEY = "hominssam.vocab.best.v1";
+const VIEWS = ["home","setup","study","cards","quiz","result"];
+function show(v){ VIEWS.forEach(x => $(x).hidden = x !== v); window.scrollTo({top:0}); }
+
+const ACTS = { list:{label:"학습 (단어 목록)", hint:"단어 목록을 보며 뜻과 영영풀이를 익힙니다. 항목을 누르면 뜻을 가리거나 보일 수 있습니다."},
+               cards:{label:"학습 (플래시카드)", hint:"카드를 넘기며 외웁니다. '다시 볼래요'로 표시한 단어만 다시 돌릴 수 있습니다."},
+               test:{label:"테스트", hint:"문제를 풀며 점수와 최고 기록에 도전합니다."} };
+const MODES = { en2ko:{label:"영어 → 뜻", hint:"영어 단어를 보고 알맞은 우리말 뜻을 고릅니다."},
+                ko2en:{label:"뜻 → 영어", hint:"우리말 뜻을 보고 알맞은 영어 단어를 고릅니다."},
+                def:{label:"영영풀이 → 영어", hint:"영어 뜻풀이를 읽고 알맞은 영어 단어를 고릅니다."},
+                spell:{label:"철자 쓰기", hint:"뜻과 첫 글자를 보고 단어를 직접 입력합니다. 한 단어짜리 표제어만 출제됩니다."} };
+const LENS = [10, 20, 30, 0];
+const cfg = { mat:null, group:"전체", act:"test", mode:"en2ko", len:20, timer:true };
+
+/* ── 자료 목록 ── */
+function renderHome(){
+  const h = $("home"); h.innerHTML = "";
+  const intro = document.createElement("p"); intro.className = "hint"; intro.style.margin = "0 2px";
+  intro.textContent = "학습할 자료를 고르세요. 자료는 계속 추가됩니다.";
+  h.appendChild(intro);
+  LIBRARY.forEach(m => {
+    const n = m.groups.reduce((s,g) => s + g.words.length, 0);
+    const b = document.createElement("button"); b.className = "mat"; b.type = "button";
+    b.innerHTML = '<span class="mt">' + esc(m.title) + '</span>' + (m.subtitle ? '<span class="ms">' + esc(m.subtitle) + '</span>' : '') +
+      '<span class="mn">단어 ' + n + '개 | ' + m.groups.length + '개 범위' + (m.added ? ' | ' + esc(m.added) : '') + '</span>';
+    b.addEventListener("click", () => openMaterial(m.id, true));
+    h.appendChild(b);
+  });
+}
+function openMaterial(id, push){
+  const m = LIBRARY.find(x => x.id === id); if(!m) return;
+  cfg.mat = m; cfg.group = "전체";
+  if(push) history.replaceState(null, "", "#" + encodeURIComponent(id));
+  $("mTitle").textContent = m.title; $("mSub").textContent = m.subtitle || "";
+  renderSetup(); show("setup");
+}
+function chip(text, on, fn){ const b=document.createElement("button"); b.className="chip"; b.type="button"; b.textContent=text; b.setAttribute("aria-pressed", on?"true":"false"); b.addEventListener("click", fn); return b; }
+function allWords(m){ return m.groups.flatMap(g => g.words.map(w => Object.assign({g:g.name}, w))); }
+function poolFor(){
+  let p = cfg.group === "전체" ? allWords(cfg.mat) : (cfg.mat.groups.find(g => g.name === cfg.group) || {words:[]}).words.map(w => Object.assign({g:cfg.group}, w));
+  if(cfg.act === "test"){
+    if(cfg.mode === "spell") p = p.filter(x => /^[a-zA-Z-]+$/.test(x.w));
+    if(cfg.mode === "def") p = p.filter(x => x.e);
+    if(cfg.group === "전체"){ const seen=new Set(); p = p.filter(x => { const k=x.w.toLowerCase(); if(seen.has(k)) return false; seen.add(k); return true; }); }
+  }
+  return p;
+}
+function renderSetup(){
+  const m = cfg.mat;
+  const gr = $("pickGroup"); gr.innerHTML = "";
+  gr.parentElement.hidden = m.groups.length < 2;
+  gr.appendChild(chip("전체 " + allWords(m).length, cfg.group==="전체", () => { cfg.group="전체"; renderSetup(); }));
+  m.groups.forEach(g => gr.appendChild(chip(g.name + " " + g.words.length, cfg.group===g.name, () => { cfg.group=g.name; renderSetup(); })));
+  const ac = $("pickAct"); ac.innerHTML = "";
+  Object.keys(ACTS).forEach(k => ac.appendChild(chip(ACTS[k].label, cfg.act===k, () => { cfg.act=k; renderSetup(); })));
+  $("actHint").textContent = ACTS[cfg.act].hint;
+  $("testOpts").hidden = cfg.act !== "test";
+  if(cfg.act === "test"){
+    const md = $("pickMode"); md.innerHTML = "";
+    Object.keys(MODES).forEach(k => md.appendChild(chip(MODES[k].label, cfg.mode===k, () => { cfg.mode=k; renderSetup(); })));
+    $("modeHint").textContent = MODES[cfg.mode].hint;
+    const pool = poolFor().length;
+    const l = $("pickLen"); l.innerHTML = "";
+    if(cfg.len && cfg.len > pool) cfg.len = 0;
+    LENS.forEach(n => { if(n && n > pool) return; l.appendChild(chip(n ? n + "문제" : "전체 " + pool + "문제", cfg.len===n, () => { cfg.len=n; renderSetup(); })); });
+    const t = $("pickTimer"); t.innerHTML = "";
+    t.appendChild(chip("10초 제한", cfg.timer===true, () => { cfg.timer=true; renderSetup(); }));
+    t.appendChild(chip("시간 무제한", cfg.timer===false, () => { cfg.timer=false; renderSetup(); }));
+    const best = store.get(BEST_KEY, {})[bestKey()];
+    $("bestLine").innerHTML = best ? '최고 기록 <b>' + best.score + '점</b> | 정답률 ' + best.rate + '%' : '<span>아직 기록이 없습니다. 첫 기록을 세워 보세요.</span>';
+  }
+  $("startBtn").textContent = cfg.act === "test" ? "테스트 시작" : "학습 시작";
+}
+function bestKey(){ return [cfg.mat.id, cfg.group, cfg.mode, cfg.len, cfg.timer].join("|"); }
+
+/* ── 학습: 목록 ── */
+let listHidden = false, listItems = [];
+function startList(){
+  listItems = poolFor(); listHidden = false;
+  $("sTitle").textContent = cfg.mat.title + " | " + cfg.group;
+  renderList(); show("study");
+}
+function renderList(){
+  $("sCount").textContent = listItems.length + "개";
+  $("toggleAll").textContent = listHidden ? "뜻 모두 보기" : "뜻 모두 가리기";
+  const wl = $("wordList"); wl.innerHTML = "";
+  listItems.forEach(x => {
+    const d = document.createElement("div"); d.className = "wi" + (listHidden ? " hide" : ""); d.setAttribute("role","button"); d.tabIndex = 0;
+    d.innerHTML = '<span class="w">' + esc(x.w) + '</span><span class="p">' + esc(x.p || "") + '</span>' +
+      '<span class="k">' + esc(x.k) + '</span>' + (x.e ? '<span class="e">' + esc(x.e) + '</span>' : '') +
+      (cfg.group === "전체" ? '<span class="g">' + esc(x.g) + '</span>' : '');
+    const tog = () => d.classList.toggle("hide");
+    d.addEventListener("click", tog); d.addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" "){ e.preventDefault(); tog(); } });
+    wl.appendChild(d);
+  });
+}
+$("toggleAll").addEventListener("click", () => { listHidden = !listHidden; renderList(); });
+$("shuffleList").addEventListener("click", () => { listItems = shuffle(listItems); renderList(); });
+
+/* ── 학습: 플래시카드 ── */
+let fc = null;
+function startCards(items){
+  fc = { q: items || shuffle(poolFor()), i:0, open:false, again:[] };
+  $("cTitle").textContent = cfg.mat.title + " | " + cfg.group;
+  renderCard(); show("cards");
+}
+function renderCard(){
+  const it = fc.q[fc.i];
+  $("cCount").textContent = (fc.i+1) + " / " + fc.q.length;
+  $("cbar").style.width = (fc.i / fc.q.length * 100) + "%";
+  const c = $("fcard"); c.className = "card fc pop";
+  c.innerHTML = '<span class="qkind">' + esc(it.g) + (it.p ? ' | ' + esc(it.p) : '') + '</span><p class="big">' + esc(it.w) + '</p>' +
+    (fc.open ? '<p class="ko">' + esc(it.k) + '</p>' + (it.e ? '<p class="def">' + esc(it.e) + '</p>' : '') : '<span class="tap">카드를 누르면 뜻이 보입니다</span>');
+}
+function cardStep(d){
+  if(fc.i + d >= fc.q.length){ finishCards(); return; }
+  fc.i = Math.max(0, fc.i + d); fc.open = false; renderCard();
+}
+function finishCards(){
+  $("quiz").hidden = true; show("result");
+  const n = fc.q.length, again = fc.again;
+  $("finalCard").innerHTML = '<span class="qkind">' + esc(cfg.mat.title) + ' | ' + esc(cfg.group) + ' | 플래시카드</span><span class="big">' + n + '</span><span class="sub">장을 모두 넘겼습니다' + (again.length ? ' | 다시 볼 단어 ' + again.length + '개' : '') + '</span>';
+  $("finalStats").innerHTML = "";
+  $("wrongWrap").innerHTML = again.length ? '<div class="card pad"><span class="label" style="display:block;margin-bottom:10px">다시 볼 단어</span><div class="wronglist">' +
+      again.map(x => '<div class="wrow"><span class="ww">' + esc(x.w) + '</span><span class="wk">' + (x.p ? x.p + " " : "") + esc(x.k) + '</span>' + (x.e ? '<span class="we">' + esc(x.e) + '</span>' : '') + '</div>').join("") + '</div></div>' : '';
+  const row = $("againRow"); row.innerHTML = "";
+  if(again.length){ const b=document.createElement("button"); b.className="primary"; b.textContent="다시 볼 단어만 한 번 더"; b.addEventListener("click", () => startCards(shuffle(again))); row.appendChild(b); }
+  const b2=document.createElement("button"); b2.textContent="처음부터 다시"; b2.addEventListener("click", () => startCards()); row.appendChild(b2);
+  const b3=document.createElement("button"); b3.textContent="설정으로"; b3.addEventListener("click", () => { renderSetup(); show("setup"); }); row.appendChild(b3);
+}
+$("fcard").addEventListener("click", () => { fc.open = !fc.open; renderCard(); });
+$("fcFlip").addEventListener("click", () => { fc.open = !fc.open; renderCard(); });
+$("fcPrev").addEventListener("click", () => cardStep(-1));
+$("fcNext").addEventListener("click", () => cardStep(1));
+$("fcKnow").addEventListener("click", () => cardStep(1));
+$("fcDont").addEventListener("click", () => { const it = fc.q[fc.i]; if(!fc.again.includes(it)) fc.again.push(it); cardStep(1); });
+
+/* ── 테스트 ── */
+let run = null;
+function startQuiz(items){
+  const pool = poolFor();
+  const q = items || shuffle(pool).slice(0, cfg.len || pool.length);
+  if(!q.length) return;
+  run = { q, i:0, score:0, combo:0, best:0, lives:3, wrong:[], right:0, pool, t0:0, tid:null, locked:false };
+  show("quiz"); ask();
+}
+function stopTimer(){ if(run && run.tid){ clearInterval(run.tid); run.tid = null; } }
+function ask(){
+  run.locked = false;
+  const it = run.q[run.i];
+  $("counter").textContent = (run.i+1) + " / " + run.q.length;
+  $("score").textContent = run.score;
+  $("hearts").innerHTML = '<span style="color:var(--bad)">' + "♥".repeat(run.lives) + '</span><span style="color:var(--line)">' + "♥".repeat(3-run.lives) + '</span>';
+  $("combo").hidden = run.combo < 2; $("combo").textContent = run.combo + "연속";
+  $("bar").style.width = (run.i / run.q.length * 100) + "%";
+  $("feedback").innerHTML = "";
+  const card = $("qcard"); card.className = "card qcard pop";
+  const ans = $("answers"); ans.innerHTML = "";
+  if(cfg.mode === "spell"){
+    const n = it.w.length;
+    card.innerHTML = '<span class="qkind">' + esc(it.g) + '</span><p class="qko">' + esc(it.k) + '</p>' + (it.e ? '<p class="qhint">' + esc(it.e) + '</p>' : '') +
+      '<span class="blanks">' + it.w[0].toUpperCase() + " " + "_ ".repeat(n-1).trim() + '</span><span class="qpos">' + n + '글자</span>';
+    const row = document.createElement("div"); row.className = "spellrow";
+    row.innerHTML = '<input id="spellIn" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="' + esc(it.w[0]) + '…" aria-label="영어 단어 입력"><button type="button" id="spellGo">확인</button>';
+    ans.appendChild(row);
+    $("spellGo").addEventListener("click", () => judgeSpell(it));
+    $("spellIn").addEventListener("keydown", e => { if(e.key === "Enter") judgeSpell(it); });
+    setTimeout(() => $("spellIn").focus(), 30);
+  } else {
+    const en = cfg.mode === "en2ko";
+    const pos = it.p ? '<span class="qpos">' + esc(it.p) + '</span>' : '';
+    card.innerHTML = '<span class="qkind">' + esc(it.g) + '</span>' + (en ? '<p class="qword">' + esc(it.w) + '</p>' : cfg.mode === "def" ? '<p class="qdef">' + esc(it.e) + '</p>' : '<p class="qko">' + esc(it.k) + '</p>') + pos;
+    const key = en ? "k" : "w";
+    const notSame = x => x[key] !== it[key];
+    const samePos = run.pool.filter(x => x.g === it.g && x.p === it.p && notSame(x));
+    const sameG = run.pool.filter(x => x.g === it.g && notSame(x));
+    const anyPos = run.pool.filter(x => x.p === it.p && notSame(x));
+    const bank = samePos.length >= 3 ? samePos : anyPos.length >= 3 ? anyPos : sameG.length >= 3 ? sameG : run.pool.filter(notSame);
+    const picks = [];
+    shuffle(bank).some(x => { if(!picks.some(p => p[key] === x[key])) picks.push(x); return picks.length === 3; });
+    shuffle(picks.concat([it])).forEach((o, idx) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "ans";
+      b.innerHTML = '<span class="key">' + (idx+1) + '</span><span>' + esc(o[key]) + '</span>';
+      b.addEventListener("click", () => judgePick(it, o, key));
+      ans.appendChild(b);
+    });
+  }
+  stopTimer();
+  const tb = $("tbar");
+  if(cfg.timer){
+    run.t0 = Date.now(); tb.parentElement.style.background = "var(--accent-soft)"; tb.style.width = "100%";
+    run.tid = setInterval(() => { const left = 1 - (Date.now() - run.t0) / 10000; tb.style.width = Math.max(0, left*100) + "%"; if(left <= 0){ stopTimer(); timeUp(it); } }, 60);
+  } else { tb.parentElement.style.background = "transparent"; tb.style.width = "0%"; }
+}
+function judgePick(it, chosen, key){
+  if(run.locked) return; run.locked = true; stopTimer();
+  const ok = chosen[key] === it[key];
+  [...$("answers").children].forEach(b => { b.disabled = true; const t = b.lastElementChild.textContent; if(t === it[key]) b.classList.add("is-good"); else if(!ok && t === chosen[key]) b.classList.add("is-bad"); });
+  settle(it, ok);
+}
+function judgeSpell(it){
+  if(run.locked) return;
+  const v = ($("spellIn").value || "").trim().toLowerCase(); if(!v) return;
+  run.locked = true; stopTimer(); $("spellIn").disabled = true; $("spellGo").disabled = true;
+  settle(it, v === it.w.toLowerCase());
+}
+function timeUp(it){
+  if(run.locked) return; run.locked = true;
+  [...$("answers").children].forEach(b => { b.disabled = true; if(b.lastElementChild && b.lastElementChild.textContent === it[cfg.mode === "en2ko" ? "k" : "w"]) b.classList.add("is-good"); });
+  const inp = $("spellIn"); if(inp){ inp.disabled = true; $("spellGo").disabled = true; }
+  settle(it, false, true);
+}
+function settle(it, ok, timedOut){
+  const fb = $("feedback");
+  const body = '<span class="vb"><b>' + esc(it.w) + '</b> ' + (it.p ? esc(it.p) + " " : "") + esc(it.k) + '</span>' + (it.e ? '<span class="ve">' + esc(it.e) + '</span>' : '');
+  if(ok){
+    run.right++; run.combo++; run.best = Math.max(run.best, run.combo);
+    const speed = cfg.timer ? Math.max(0, 5 - Math.floor((Date.now() - run.t0) / 2000)) : 0;
+    run.score += 10 + Math.min(run.combo - 1, 5) * 2 + speed;
+    fb.innerHTML = '<div class="verdict good"><span class="vt">정답</span>' + body + '</div>';
+  } else {
+    run.combo = 0; run.lives--; run.wrong.push(it);
+    fb.innerHTML = '<div class="verdict bad"><span class="vt">' + (timedOut ? "시간 초과" : "오답") + '</span>' + body + '</div>';
+  }
+  $("score").textContent = run.score;
+  const nb = document.createElement("button"); nb.className = "next"; nb.type = "button";
+  const last = run.i === run.q.length - 1 || run.lives <= 0;
+  nb.textContent = last ? "결과 보기" : "다음 문제";
+  nb.addEventListener("click", advance); fb.appendChild(nb); nb.focus();
+}
+function advance(){ if(run.lives <= 0 || run.i === run.q.length - 1) return finish(); run.i++; ask(); }
+function finish(){
+  stopTimer(); show("result");
+  const done = run.right + run.wrong.length, rate = done ? Math.round(run.right / done * 100) : 0;
+  const key = bestKey(), all = store.get(BEST_KEY, {}), prev = all[key];
+  const isBest = !prev || run.score > prev.score;
+  if(isBest){ all[key] = {score:run.score, rate}; store.set(BEST_KEY, all); }
+  const out = run.lives <= 0;
+  $("finalCard").innerHTML = '<span class="qkind">' + esc(cfg.mat.title) + ' | ' + esc(cfg.group) + ' | ' + MODES[cfg.mode].label + '</span><span class="big">' + run.score + '</span>' +
+    '<span class="sub">' + (out ? '하트를 모두 잃었습니다 | ' : '') + done + '문제 중 ' + run.right + '문제 정답</span>' + (isBest && run.score > 0 ? '<span class="newbest">최고 기록 경신</span>' : '');
+  $("finalStats").innerHTML = '<div class="cell"><div class="n">' + rate + '%</div><div class="t">정답률</div></div><div class="cell"><div class="n">' + run.best + '</div><div class="t">최다 연속</div></div><div class="cell"><div class="n">' + run.wrong.length + '</div><div class="t">오답</div></div>';
+  $("wrongWrap").innerHTML = run.wrong.length
+    ? '<div class="card pad"><span class="label" style="display:block;margin-bottom:10px">틀린 단어 ' + run.wrong.length + '개</span><div class="wronglist">' +
+      run.wrong.map(x => '<div class="wrow"><span class="ww">' + esc(x.w) + '</span><span class="wk">' + (x.p ? esc(x.p) + " " : "") + esc(x.k) + '</span>' + (x.e ? '<span class="we">' + esc(x.e) + '</span>' : '') + '</div>').join("") + '</div></div>'
+    : '<div class="card pad" style="text-align:center"><span class="sub" style="color:var(--good);font-weight:600">전부 맞혔습니다.</span></div>';
+  const row = $("againRow"); row.innerHTML = "";
+  if(run.wrong.length){ const b=document.createElement("button"); b.className="primary"; b.textContent="틀린 단어만 다시"; b.addEventListener("click", () => startQuiz(shuffle(run.wrong))); row.appendChild(b); }
+  const b2=document.createElement("button"); b2.textContent="같은 설정으로 다시"; b2.addEventListener("click", () => startQuiz()); row.appendChild(b2);
+  const b3=document.createElement("button"); b3.textContent="설정으로"; b3.addEventListener("click", () => { renderSetup(); show("setup"); }); row.appendChild(b3);
+}
+document.addEventListener("keydown", e => {
+  if($("quiz").hidden || !run || run.locked && e.key !== "Enter") return;
+  if(/^[1-4]$/.test(e.key) && cfg.mode !== "spell"){ const b = $("answers").children[+e.key - 1]; if(b && !b.disabled) b.click(); }
+  else if(e.key === "Enter"){ const n = $("feedback").querySelector(".next"); if(n) n.click(); }
+});
+
+/* ── 연결 ── */
+$("startBtn").addEventListener("click", () => { if(cfg.act === "list") startList(); else if(cfg.act === "cards") startCards(); else startQuiz(); });
+$("back1").addEventListener("click", () => { history.replaceState(null, "", location.pathname); renderHome(); show("home"); });
+$("back2").addEventListener("click", () => { renderSetup(); show("setup"); });
+$("back3").addEventListener("click", () => { renderSetup(); show("setup"); });
+$("brand").addEventListener("click", () => { history.replaceState(null, "", location.pathname); renderHome(); show("home"); });
+renderHome();
+const hashId = decodeURIComponent(location.hash.replace(/^#/, ""));
+if(hashId && LIBRARY.some(m => m.id === hashId)) openMaterial(hashId, false); else show("home");
+</script>
+
+</body>
+</html>
