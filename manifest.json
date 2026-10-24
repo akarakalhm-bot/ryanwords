@@ -4,34 +4,44 @@
   "title": "2026학년도 2학년 10월 모의고사",
   "subtitle": "18~24번, 29~42번 고교 필수 어휘 (품사, 뜻, 영영풀이)",
   "added": "2026.10",
-  "file": "data/2026-g2-oct.json"
+  "file": "data/2026-g2-oct.json",
+  "words": 481,
+  "ranges": 20
  },
  {
   "id": "2026-g1-oct",
   "title": "2026학년도 1학년 10월 모의고사",
   "subtitle": "20~24번, 29~40번 고교 필수 어휘 (품사, 뜻, 영영풀이)",
   "added": "2026.10",
-  "file": "data/2026-g1-oct.json"
+  "file": "data/2026-g1-oct.json",
+  "words": 401,
+  "ranges": 17
  },
  {
   "id": "eng2-jihak-3",
   "title": "영어2 지학사(신) 3과",
   "subtitle": "Mathematics Is Everywhere, 본문 1~3 + Read More 교과서 본문 어휘 (품사, 뜻, 영영풀이)",
   "added": "2026.10",
-  "file": "data/eng2-jihak-3.json"
+  "file": "data/eng2-jihak-3.json",
+  "words": 117,
+  "ranges": 4
  },
  {
   "id": "eng2-mirae-3",
   "title": "영어2 미래엔(김) 3과",
   "subtitle": "The Model Millionaire, 본문 1~4 + Read More 교과서 본문 어휘 (품사, 뜻, 영영풀이)",
   "added": "2026.10",
-  "file": "data/eng2-mirae-3.json"
+  "file": "data/eng2-mirae-3.json",
+  "words": 117,
+  "ranges": 5
  },
  {
   "id": "ce2-neungyul-3",
   "title": "공통영어2 능률(민) 3과",
   "subtitle": "A Timeless Symbol of Korea, 본문 1~5 교과서 본문 어휘 (품사, 뜻, 영영풀이)",
   "added": "2026.10",
-  "file": "data/ce2-neungyul-3.json"
+  "file": "data/ce2-neungyul-3.json",
+  "words": 77,
+  "ranges": 5
  }
 ]
