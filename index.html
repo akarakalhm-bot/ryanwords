@@ -50,6 +50,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 :root[data-theme="dark"] .chip[aria-pressed="true"],:root:not([data-theme="light"]) .chip[aria-pressed="true"]{color:#1A1327}
 .hint{font-size:13px;color:var(--muted);margin:0}
+.search{width:100%;box-sizing:border-box;font:inherit;font-size:15px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);margin:2px 0 4px}
+.search:focus{outline:2px solid var(--accent);outline-offset:1px}
 .install{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow);margin-bottom:14px}
 .install img{width:44px;height:44px;border-radius:11px;flex:none}
 .install .txt{flex:1;font-size:13px;line-height:1.45;color:var(--muted)}.install .txt b{display:block;font-size:14px;color:var(--ink);font-weight:600}
@@ -268,17 +270,41 @@ function renderHome(){
   const intro = document.createElement("p"); intro.className = "hint"; intro.style.margin = "0 2px";
   intro.textContent = "학습할 자료를 고르세요. 자료는 계속 추가됩니다.";
   h.appendChild(intro);
-  LIBRARY.forEach(m => {
-    const n = m.groups.reduce((s,g) => s + g.words.length, 0);
-    const b = document.createElement("button"); b.className = "mat"; b.type = "button";
-    b.innerHTML = '<span class="mt">' + esc(m.title) + '</span>' + (m.subtitle ? '<span class="ms">' + esc(m.subtitle) + '</span>' : '') +
-      '<span class="mn">단어 ' + n + '개 | ' + m.groups.length + '개 범위' + (m.added ? ' | ' + esc(m.added) : '') + '</span>';
-    b.addEventListener("click", () => openMaterial(m.id, true));
-    h.appendChild(b);
-  });
+  let q = "";
+  if(LIBRARY.length > 6){
+    const inp = document.createElement("input"); inp.type = "search"; inp.className = "search"; inp.placeholder = "자료 찾기 (예: 지학사, 10월, 3과)";
+    inp.value = HOME_Q; inp.addEventListener("input", () => { HOME_Q = inp.value; renderList(); });
+    h.appendChild(inp);
+  }
+  const list = document.createElement("div"); list.className = "lib"; h.appendChild(list);
+  function renderList(){
+    list.innerHTML = "";
+    const kw = HOME_Q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const items = LIBRARY.filter(m => kw.every(k => ((m.title || "") + " " + (m.subtitle || "")).toLowerCase().includes(k)));
+    if(!items.length){ const e = document.createElement("p"); e.className = "hint"; e.textContent = "찾는 자료가 없습니다."; list.appendChild(e); return; }
+    items.forEach(m => {
+      const n = m.groups ? m.groups.reduce((s,g) => s + g.words.length, 0) : (m.words || 0);
+      const gn = m.groups ? m.groups.length : (m.ranges || 0);
+      const b = document.createElement("button"); b.className = "mat"; b.type = "button";
+      b.innerHTML = '<span class="mt">' + esc(m.title) + '</span>' + (m.subtitle ? '<span class="ms">' + esc(m.subtitle) + '</span>' : '') +
+        '<span class="mn">단어 ' + n + '개 | ' + gn + '개 범위' + (m.added ? ' | ' + esc(m.added) : '') + '</span>';
+      b.addEventListener("click", () => openMaterial(m.id, true));
+      list.appendChild(b);
+    });
+  }
+  renderList();
 }
-function openMaterial(id, push){
+let HOME_Q = "";
+async function loadMaterial(m){
+  if(m.groups) return true;
+  try {
+    const r = await fetch(m.file + "?v=" + Math.floor(Date.now() / 600000)); if(!r.ok) throw 0;
+    m.groups = await r.json(); return true;
+  } catch(err){ const e = document.createElement("p"); e.className = "hint"; e.style.color = "var(--bad)"; e.textContent = "자료를 불러오지 못했습니다. 인터넷 연결을 확인한 뒤 다시 눌러 주세요."; $("home").prepend(e); setTimeout(() => e.remove(), 4000); return false; }
+}
+async function openMaterial(id, push){
   const m = LIBRARY.find(x => x.id === id); if(!m) return;
+  if(!m.groups){ document.body.style.cursor = "progress"; const ok = await loadMaterial(m); document.body.style.cursor = ""; if(!ok) return; }
   cfg.mat = m; cfg.group = "전체";
   if(push) history.replaceState(null, "", "#" + encodeURIComponent(id));
   $("mTitle").textContent = m.title; $("mSub").textContent = m.subtitle || "";
@@ -519,11 +545,8 @@ if(LIBRARY.length){ boot(); }
 else {
   // 정적 호스팅(GitHub Pages)용: manifest.json → data/<id>.json 을 읽어 자료 목록을 채운다
   const bust = "?v=" + Math.floor(Date.now() / 600000);
-  fetch("manifest.json" + bust).then(r => r.json()).then(async man => {
-    for(const m of man){
-      const groups = await fetch(m.file + bust).then(r => r.json());
-      LIBRARY.push(Object.assign({}, m, {groups}));
-    }
+  fetch("manifest.json" + bust).then(r => r.json()).then(man => {
+    man.forEach(m => LIBRARY.push(Object.assign({}, m)));   // 단어 데이터는 자료를 열 때 그때그때 불러옴
     boot();
   }).catch(() => { $("home").innerHTML = '<p class="hint">자료를 불러오지 못했습니다. 잠시 후 다시 열어 주세요.</p>'; show("home"); });
 }
