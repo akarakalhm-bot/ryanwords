@@ -43,5 +43,41 @@
   "file": "data/ce2-neungyul-3.json",
   "words": 77,
   "ranges": 5
+ },
+ {
+  "id": "eng2-jihak-5",
+  "title": "영어2 지학사(신) 5과",
+  "subtitle": "Future-Proof Your Career, 본문 1~3 + Read More 교과서 본문 어휘 (품사, 뜻, 영영풀이)",
+  "added": "2026.11",
+  "file": "data/eng2-jihak-5.json",
+  "words": 143,
+  "ranges": 4
+ },
+ {
+  "id": "eng2-mirae-4",
+  "title": "영어2 미래엔(김) 4과",
+  "subtitle": "What-If Science, 본문 1~3 + Read More 교과서 본문 어휘 (품사, 뜻, 영영풀이)",
+  "added": "2026.11",
+  "file": "data/eng2-mirae-4.json",
+  "words": 134,
+  "ranges": 4
+ },
+ {
+  "id": "ce2-neungyul-4",
+  "title": "공통영어2 능률(민) 4과",
+  "subtitle": "Looking to Nature for Help, 본문 1~5 교과서 본문 어휘 (품사, 뜻, 영영풀이)",
+  "added": "2026.11",
+  "file": "data/ce2-neungyul-4.json",
+  "words": 118,
+  "ranges": 5
+ },
+ {
+  "id": "2026-g2-sep",
+  "title": "2026학년도 2학년 9월 모의고사",
+  "subtitle": "18~24번, 29~40번 고교 필수 어휘 (품사, 뜻, 영영풀이)",
+  "added": "2026.11",
+  "file": "data/2026-g2-sep.json",
+  "words": 597,
+  "ranges": 19
  }
 ]
