@@ -87,6 +87,11 @@ button{font:inherit;color:inherit;cursor:pointer}
 .wi .k{grid-column:1/-1;font-size:15px}
 .wi .e{grid-column:1/-1;font-family:var(--display);font-size:13.5px;color:var(--muted);line-height:1.4}
 .wi.hide .k,.wi.hide .e{display:none}
+.spk{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;margin-left:6px;vertical-align:middle;border:0;border-radius:50%;background:var(--accent-soft);color:var(--accent);cursor:pointer;padding:0;flex:none}
+.spk svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.spk:active{transform:scale(.92)}.spk.on{background:var(--accent);color:#fff}
+.fc .spk,.qcard .spk{width:36px;height:36px;margin-left:10px}.fc .spk svg,.qcard .spk svg{width:19px;height:19px}
+.no-tts .spk{display:none}
 .wi .g{grid-column:1/-1;font-size:11px;color:var(--muted);letter-spacing:.05em}
 /* 플래시카드 */
 .fc{min-height:260px;padding:30px 22px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;cursor:pointer;user-select:none}
@@ -223,6 +228,38 @@ const LIBRARY = /*__LIBRARY__*/[];
 
 
 const $ = id => document.getElementById(id);
+/* ── 발음 듣기: 기기 내장 음성 합성(미국 영어 우선), 음원 파일 없음 ── */
+const TTS = (() => {
+  const ok = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+  let voice = null;
+  const PREF = ["Samantha", "Google US English", "Microsoft Aria", "Microsoft Jenny", "Microsoft Michelle", "Microsoft Zira", "Ava", "Allison", "Alex", "Nicky", "Joelle", "Tom"];
+  function pick(){
+    const vs = speechSynthesis.getVoices(); if(!vs.length) return;
+    const us = vs.filter(v => /^en[-_]US/i.test(v.lang));
+    voice = PREF.map(n => us.find(v => v.name.startsWith(n) && !/compact/i.test(v.name))).find(Boolean) || us.find(v => v.default) || us[0] || vs.find(v => /^en/i.test(v.lang)) || null;
+  }
+  if(ok){ pick(); speechSynthesis.addEventListener("voiceschanged", pick); }
+  else document.documentElement.classList.add("no-tts");
+  function clean(w){
+    return w.replace(/\bV-ing\b/g, "doing").replace(/\b-ing\b/g, "doing").replace(/\bV\b/g, "do").replace(/\bp\.p\./g, "done")
+            .replace(/[()]/g, "").replace(/~/g, "").replace(/\//g, " or ").replace(/\s+/g, " ").trim();
+  }
+  function say(text, btn){
+    if(!ok) return;
+    try {
+      speechSynthesis.cancel();
+      if(!voice) pick();
+      const u = new SpeechSynthesisUtterance(clean(text)); u.lang = "en-US"; if(voice) u.voice = voice; u.rate = 0.9; u.pitch = 1;
+      if(btn){ btn.classList.add("on"); u.onend = u.onerror = () => btn.classList.remove("on"); }
+      speechSynthesis.speak(u);
+    } catch(e) {}
+  }
+  return { ok, say };
+})();
+const SPK_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+function spk(w){ return TTS.ok ? '<button type="button" class="spk" data-say="' + esc(w) + '" aria-label="발음 듣기" title="발음 듣기">' + SPK_SVG + '</button>' : ''; }
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest(".spk"); if(!b) return; e.stopPropagation(); e.preventDefault(); TTS.say(b.dataset.say, b); }, true);
+document.addEventListener("keydown", e => { const b = e.target.closest && e.target.closest(".spk"); if(b && (e.key === "Enter" || e.key === " ")) e.stopPropagation(); }, true);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const shuffle = a => { const b = a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
 const store = { get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} } };
@@ -362,7 +399,7 @@ function renderList(){
   const wl = $("wordList"); wl.innerHTML = "";
   listItems.forEach(x => {
     const d = document.createElement("div"); d.className = "wi" + (listHidden ? " hide" : ""); d.setAttribute("role","button"); d.tabIndex = 0;
-    d.innerHTML = '<span class="w">' + esc(x.w) + '</span><span class="p">' + esc(x.p || "") + '</span>' +
+    d.innerHTML = '<span class="w">' + esc(x.w) + spk(x.w) + '</span><span class="p">' + esc(x.p || "") + '</span>' +
       '<span class="k">' + esc(x.k) + '</span>' + (x.e ? '<span class="e">' + esc(x.e) + '</span>' : '') +
       (cfg.group === "전체" ? '<span class="g">' + esc(x.g) + '</span>' : '');
     const tog = () => d.classList.toggle("hide");
@@ -385,7 +422,7 @@ function renderCard(){
   $("cCount").textContent = (fc.i+1) + " / " + fc.q.length;
   $("cbar").style.width = (fc.i / fc.q.length * 100) + "%";
   const c = $("fcard"); c.className = "card fc pop";
-  c.innerHTML = '<span class="qkind">' + esc(it.g) + (it.p ? ' | ' + esc(it.p) : '') + '</span><p class="big">' + esc(it.w) + '</p>' +
+  c.innerHTML = '<span class="qkind">' + esc(it.g) + (it.p ? ' | ' + esc(it.p) : '') + '</span><p class="big">' + esc(it.w) + spk(it.w) + '</p>' +
     (fc.open ? '<p class="ko">' + esc(it.k) + '</p>' + (it.e ? '<p class="def">' + esc(it.e) + '</p>' : '') : '<span class="tap">카드를 누르면 뜻이 보입니다</span>');
 }
 function cardStep(d){
@@ -398,7 +435,7 @@ function finishCards(){
   $("finalCard").innerHTML = '<span class="qkind">' + esc(cfg.mat.title) + ' | ' + esc(cfg.group) + ' | 플래시카드</span><span class="big">' + n + '</span><span class="sub">장을 모두 넘겼습니다' + (again.length ? ' | 다시 볼 단어 ' + again.length + '개' : '') + '</span>';
   $("finalStats").innerHTML = "";
   $("wrongWrap").innerHTML = again.length ? '<div class="card pad"><span class="label" style="display:block;margin-bottom:10px">다시 볼 단어</span><div class="wronglist">' +
-      again.map(x => '<div class="wrow"><span class="ww">' + esc(x.w) + '</span><span class="wk">' + (x.p ? x.p + " " : "") + esc(x.k) + '</span>' + (x.e ? '<span class="we">' + esc(x.e) + '</span>' : '') + '</div>').join("") + '</div></div>' : '';
+      again.map(x => '<div class="wrow"><span class="ww">' + esc(x.w) + spk(x.w) + '</span><span class="wk">' + (x.p ? x.p + " " : "") + esc(x.k) + '</span>' + (x.e ? '<span class="we">' + esc(x.e) + '</span>' : '') + '</div>').join("") + '</div></div>' : '';
   const row = $("againRow"); row.innerHTML = "";
   if(again.length){ const b=document.createElement("button"); b.className="primary"; b.textContent="다시 볼 단어만 한 번 더"; b.addEventListener("click", () => startCards(shuffle(again))); row.appendChild(b); }
   const b2=document.createElement("button"); b2.textContent="처음부터 다시"; b2.addEventListener("click", () => startCards()); row.appendChild(b2);
@@ -445,7 +482,7 @@ function ask(){
   } else {
     const en = cfg.mode === "en2ko";
     const pos = it.p ? '<span class="qpos">' + esc(it.p) + '</span>' : '';
-    card.innerHTML = '<span class="qkind">' + esc(it.g) + '</span>' + (en ? '<p class="qword">' + esc(it.w) + '</p>' : cfg.mode === "def" ? '<p class="qdef">' + esc(it.e) + '</p>' : '<p class="qko">' + esc(it.k) + '</p>') + pos;
+    card.innerHTML = '<span class="qkind">' + esc(it.g) + '</span>' + (en ? '<p class="qword">' + esc(it.w) + spk(it.w) + '</p>' : cfg.mode === "def" ? '<p class="qdef">' + esc(it.e) + '</p>' : '<p class="qko">' + esc(it.k) + '</p>') + pos;
     const key = en ? "k" : "w";
     const notSame = x => x[key] !== it[key];
     const samePos = run.pool.filter(x => x.g === it.g && x.p === it.p && notSame(x));
@@ -488,7 +525,7 @@ function timeUp(it){
 }
 function settle(it, ok, timedOut){
   const fb = $("feedback");
-  const body = '<span class="vb"><b>' + esc(it.w) + '</b> ' + (it.p ? esc(it.p) + " " : "") + esc(it.k) + '</span>' + (it.e ? '<span class="ve">' + esc(it.e) + '</span>' : '');
+  const body = '<span class="vb"><b>' + esc(it.w) + '</b>' + spk(it.w) + ' ' + (it.p ? esc(it.p) + " " : "") + esc(it.k) + '</span>' + (it.e ? '<span class="ve">' + esc(it.e) + '</span>' : '');
   if(ok){
     run.right++; run.combo++; run.best = Math.max(run.best, run.combo);
     const speed = cfg.timer ? Math.max(0, 5 - Math.floor((Date.now() - run.t0) / 2000)) : 0;
@@ -517,7 +554,7 @@ function finish(){
   $("finalStats").innerHTML = '<div class="cell"><div class="n">' + rate + '%</div><div class="t">정답률</div></div><div class="cell"><div class="n">' + run.best + '</div><div class="t">최다 연속</div></div><div class="cell"><div class="n">' + run.wrong.length + '</div><div class="t">오답</div></div>';
   $("wrongWrap").innerHTML = run.wrong.length
     ? '<div class="card pad"><span class="label" style="display:block;margin-bottom:10px">틀린 단어 ' + run.wrong.length + '개</span><div class="wronglist">' +
-      run.wrong.map(x => '<div class="wrow"><span class="ww">' + esc(x.w) + '</span><span class="wk">' + (x.p ? esc(x.p) + " " : "") + esc(x.k) + '</span>' + (x.e ? '<span class="we">' + esc(x.e) + '</span>' : '') + '</div>').join("") + '</div></div>'
+      run.wrong.map(x => '<div class="wrow"><span class="ww">' + esc(x.w) + spk(x.w) + '</span><span class="wk">' + (x.p ? esc(x.p) + " " : "") + esc(x.k) + '</span>' + (x.e ? '<span class="we">' + esc(x.e) + '</span>' : '') + '</div>').join("") + '</div></div>'
     : '<div class="card pad" style="text-align:center"><span class="sub" style="color:var(--good);font-weight:600">전부 맞혔습니다.</span></div>';
   const row = $("againRow"); row.innerHTML = "";
   if(run.wrong.length){ const b=document.createElement("button"); b.className="primary"; b.textContent="틀린 단어만 다시"; b.addEventListener("click", () => startQuiz(shuffle(run.wrong))); row.appendChild(b); }
